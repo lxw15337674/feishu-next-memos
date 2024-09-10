@@ -5,14 +5,11 @@ import useTagStore from '@/store/tag';
 import { useFavicon, useMount, useTitle } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import useCountStore from '@/store/count';
-import { ExtendedRecordMap } from 'notion-types';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
-interface Props {
-    recordMap: ExtendedRecordMap;
-}
 
-export default function Home({ recordMap }: Props) {
+
+export default function Home() {
     useTitle('Nmemos')
     useFavicon('/favicon.ico')
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
@@ -30,7 +27,6 @@ export default function Home({ recordMap }: Props) {
         setEditCodePermission(config.codeConfig.editCode);
         fetchInitData();
         fetchTags();
-        setRecordMap(recordMap);
     });
     return (
         <InfiniteScroll
