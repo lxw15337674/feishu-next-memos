@@ -1,9 +1,9 @@
-import { validateAccessCode, validateEditCode } from '@/api/actions';
 import { create } from 'zustand';
 import computed from 'zustand-middleware-computed';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { merge } from 'lodash-es';
 import { immer } from 'zustand/middleware/immer';
+import { validateAccessCode, validateEditCode } from '../api/validActions';
 // interface Config {
 //     // memo正文是否显示标签
 //     isShowTags: boolean;

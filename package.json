@@ -1,9 +1,9 @@
 {
-  "name": "Fmemos",
+  "name": "fmemos",
   "version": "1.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3010",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -29,6 +29,7 @@
     "@radix-ui/react-toast": "^1.2.1",
     "@types/lodash-es": "^4.17.12",
     "ahooks": "^3.8.1",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

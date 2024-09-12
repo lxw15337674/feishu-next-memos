@@ -1,4 +1,4 @@
-import { Properties } from '@/type';
+import { newMemo } from '../api/type';
 
 enum ContentType {
   Text = 'text',
@@ -61,7 +61,7 @@ export function extractTags(text: string): string[] {
   return tags ? tags : [];
 }
 
-export function convertGMTDateToLocal(gmtDateString: string) {
+export function convertGMTDateToLocal(gmtDateString: Date) {
   // Parse the GMT date string
   const gmtDate = new Date(gmtDateString);
 
@@ -77,9 +77,8 @@ export function convertGMTDateToLocal(gmtDateString: string) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-
 // 拆分模式：标签和文本分开。
-export function splitMode(content: string, fileUrls?: string[]): Properties {
+export function splitMode(content: string, fileTokens?: string[]): newMemo {
   // 将字符串按换行符分割成数组
   const lines = content.split('\n');
   const tags: string[] = []
@@ -94,34 +93,15 @@ export function splitMode(content: string, fileUrls?: string[]): Properties {
     }
     return text
   })
-  let imagesContent: { type: string; text: { content: string; link: { url: string; }; }; }[] = []
-  if (fileUrls){
-    imagesContent = fileUrls.map((url) => ({
-      type:'text',
-      text:{
-        "content": url,
-        "link": {
-          url
-        }
-      }
+  let images: { file_token: string }[] = []
+  if (fileTokens) {
+    images = fileTokens.map((file_token) => ({
+      file_token
     }))
   }
   return {
-    content: {
-      rich_text: richTexts.map((text) => ({
-        type: 'text',
-        text: {
-          content: text,
-        },
-      })),
-    },
-    tags: {
-      multi_select: tags.map((tag) => ({
-        name: tag,
-      })),
-    },
-    images:{
-      rich_text: imagesContent
-    }
-  };
-} 
+    content: content,
+    tags,
+    images
+  }
+}

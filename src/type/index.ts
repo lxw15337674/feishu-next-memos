@@ -28,6 +28,5 @@ export interface Properties {
 export interface TagType {
   id: string;
   name: string;
-  color: string;
-  description: string;
+  color: number;
 }

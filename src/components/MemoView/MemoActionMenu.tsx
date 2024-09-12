@@ -6,14 +6,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Icon from '../Icon';
-import { archivePage } from '@/api/actions';
-import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
 import useMemoStore from '@/store/memo';
 import { Button } from '../ui/button';
 import { Content } from '@/utils/parser';
 import useShareCardStore from '@/store/shareCard';
 import useConfigStore from '@/store/config';
+import { deleteMemo } from '../../api/larkActions';
 
 interface Props {
   memoId: string;
@@ -26,30 +25,13 @@ const MemoActionMenu = (props: Props) => {
   const { openShareCord } = useShareCardStore()
   const { hasEditCodePermission } = useConfigStore()
   const { toast } = useToast();
-  const { removeMemo, insertMemo } = useMemoStore();
+  const { removeMemo } = useMemoStore();
   const handleDeleteMemoClick = async () => {
-    await archivePage(memoId, true);
+    await deleteMemo(memoId);
     removeMemo(memoId);
     toast({
       title: '已删除',
-      description: '已将笔记归档',
-      action: (
-        <ToastAction
-          altText="撤回"
-          onClick={async () => {
-            const memo = await archivePage(memoId, false);
-            if (memo) {
-              insertMemo(memo);
-            }
-            toast({
-              title: '已撤回',
-              description: '已将笔记撤回',
-            });
-          }}
-        >
-          撤回
-        </ToastAction>
-      ),
+      description: '已成功删除该条笔记',
     });
   };
   const handleEditMemoClick = () => {

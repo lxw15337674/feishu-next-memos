@@ -1,7 +1,7 @@
-import { getAllLabels } from '@/api/actions';
 import { TagType } from '@/type';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { getAllFields } from '../api/larkActions';
 
 interface TagStore {
   tags: TagType[];
@@ -17,7 +17,9 @@ const useTagStore = create<TagStore>()(
       (set) => ({
         tags: [],
         fetchTags: async () => {
-          const tags = await getAllLabels();
+          const allFields = await getAllFields();
+          if (!allFields) return;
+          const tags = allFields.items?.find(item => item.field_name === 'tags')?.property?.options as TagType[];
           set({ tags: tags ?? [] });
         },
         upsertTag: async (tagName: string) => { },

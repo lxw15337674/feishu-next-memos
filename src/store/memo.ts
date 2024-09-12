@@ -1,21 +1,17 @@
-import { getDBData } from '@/api/actions';
-import {
-  DatabaseObjectResponse,
-  QueryDatabaseResponse,
-} from '@notionhq/client/build/src/api-endpoints';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import useFilterStore from './filter';
 import { immer } from 'zustand/middleware/immer';
+import { getMemoByIdAction, getMemosData } from '../api/larkActions';
+import { Bitable, Memo, ItemFields } from '../api/type';
+import computed from 'zustand-middleware-computed';
 
 interface MemoStore {
-  memos: DatabaseObjectResponse[];
-  databases: QueryDatabaseResponse;
+  memos: Memo[];
+  databases: Bitable;
   fetchInitData: () => Promise<void>;
   fetchPagedData: () => Promise<void>;
-  removeMemo: (pageId: string) => number;
-  insertMemo: (page: DatabaseObjectResponse) => void;
-  updateMemo: (page: DatabaseObjectResponse) => void;
+  removeMemo: (record_id: string) => number;
+  updateMemo: (record_id: string) => void;
 }
 
 const useMemoStore = create<MemoStore>()(
@@ -24,56 +20,49 @@ const useMemoStore = create<MemoStore>()(
       immer((set, get) => ({
         memos: [],
         databases: {
-          object: 'list',
-          results: [],
-          next_cursor: null,
-          has_more: true,
-          type: 'page_or_database',
-          page_or_database: {},
-          request_id: '',
+          has_more: false,
+          items: [],
+          page_token: '',
+          total: 0,
         },
         // 删除某条数据
         removeMemo: (pageId: string) => {
-          const index = get().memos.findIndex((item) => item.id === pageId);
-          set((state) => {state.memos.splice(index, 1)});
+          const index = get().memos.findIndex((item) => item.record_id === pageId);
+          set((state) => { state.memos.splice(index, 1) });
           return index;
         },
-        // 插入数据
-        insertMemo: (page: DatabaseObjectResponse) => {
-          set((state) => {
-            state.memos.unshift(page)
-          });
-        },
         // 更新数据
-        updateMemo: (page: DatabaseObjectResponse) => {
-          set((state) => {
-            const index = state.memos.findIndex((item: DatabaseObjectResponse) => item.id === page.id);
-            if (index !== -1) {
-              state.memos[index] = page;
-            }
+        updateMemo: (record_id: string) => {
+          getMemoByIdAction(record_id).then((data) => {
+            set((state) => {
+              const index = state.memos.findIndex((item) => item.record_id === record_id);
+              if (index !== -1 && data) {
+                state.memos[index] = data
+              }
+            });
           });
         },
         // 获取初始化数据
         fetchInitData: async () => {
-          const databases = await getDBData({
-            filter: useFilterStore.getState().filterParams,
+          const databases = await getMemosData({
+            // filter: useFilterStore.getState().filterParams,
           });
           set({
             databases,
-            memos: databases.results as DatabaseObjectResponse[],
+            memos: databases.items
           });
         },
         // 获取分页数据
         fetchPagedData: async () => {
-          const startCursor = get().databases.next_cursor;
-          if (startCursor) {
-            const databases = await getDBData({
-              startCursor,
-              filter: useFilterStore.getState().filterParams,
+          const page_token = get().databases.page_token;
+          if (page_token) {
+            const databases = await getMemosData({
+              page_token,
+              // filter: useFilterStore.getState().filterParams,
             });
             set((state) => {
               state.databases = databases;
-              state.memos.push(...(databases.results as DatabaseObjectResponse[]));
+              state.memos.push(...databases.items);
             });
           }
         },
@@ -84,7 +73,7 @@ const useMemoStore = create<MemoStore>()(
       }
     ),
     {
-      name: 'memo', // devtools名称
+      name: 'memo',
     }
   )
 );

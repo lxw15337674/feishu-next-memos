@@ -1,9 +1,4 @@
 'use client';
-import {
-  DatabaseObjectResponse,
-  MultiSelectPropertyItemObjectResponse,
-  RichTextItemResponse,
-} from '@notionhq/client/build/src/api-endpoints';
 import React, { useMemo } from 'react';
 import Tag from '../Tag';
 import MemoActionMenu from './MemoActionMenu';
@@ -13,36 +8,36 @@ import "@github/relative-time-element";
 import Editor from '../Editor';
 import useMemoStore from '@/store/memo';
 import { useRequest } from 'ahooks';
-import { updatePageProperties } from '@/api/actions';
 import useConfigStore from '@/store/config';
 import Image from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
 import ImageViewer from '../ImageViewer';
+import { Item, ItemFields } from '../../api/type';
+import { updateMemoAction } from '../../api/larkActions';
 
-const MemoView: React.FC<DatabaseObjectResponse> = ({
-  properties,
+const MemoView = ({
+  tags = [],
+  content,
   last_edited_time,
   created_time,
   id,
-}) => {
+  images
+}: ItemFields & { id: string }) => {
   const [isEdited, setIsEdited] = React.useState(false);
-  const memoTags = useMemo(() => {
-    const tags = properties?.tags as unknown as MultiSelectPropertyItemObjectResponse;
-    return tags?.multi_select?.map((item) => item.name);
-  }, [properties.tags]);
   const memoImages = useMemo(() => {
-    return (properties.images as any)?.rich_text?.map((item: { href: any; }) => item.href) as string[]
-  }, [properties.images]);
+    console.log(images)
+  }, [images]);
+  console.log(memoImages)
   const time = useMemo(() => {
-    return convertGMTDateToLocal(last_edited_time);
+    return convertGMTDateToLocal(new Date(last_edited_time));
   }, [last_edited_time]);
   const { updateMemo } = useMemoStore();
   const { config } = useConfigStore()
-  const { runAsync: updateRecord } = useRequest(updatePageProperties, {
+  const { runAsync: updateRecord } = useRequest(updateMemoAction, {
     manual: true,
-    onSuccess: (data) => {
-      if (data) {
-        updateMemo(data)
+    onSuccess: (id) => {
+      if (id) {
+        updateMemo(id)
         setIsEdited(false)
       }
     }
@@ -52,15 +47,15 @@ const MemoView: React.FC<DatabaseObjectResponse> = ({
   }, [created_time])
 
   const memoContentText = useMemo(() => {
-    return (properties.content as any)?.rich_text?.map(
-      (item: RichTextItemResponse) => item.plain_text,
+    return content?.map(
+      (item) => item.text,
     ) as string[]
   }, [
-    properties.content
+    content
   ])
 
   const parsedContent = useMemo(() => {
-    return memoContentText.map((item) => {
+    return memoContentText?.map((item) => {
       return parseContent(item)
     })
   }, [memoContentText])
@@ -68,8 +63,8 @@ const MemoView: React.FC<DatabaseObjectResponse> = ({
   if (isEdited) {
     return (
       <div className='mb-2'>
-        <Editor onSubmit={(text, fileUrls) => updateRecord(id, text, fileUrls)} defaultValue={memoContentText.join('\n')}
-          defaultUrls={memoImages}
+        <Editor onSubmit={(text, fileTokens) => updateRecord(id, text, fileTokens)} defaultValue={memoContentText.join('\n')}
+          defaultUrls={images}
           onCancel={() => setIsEdited(false)}
         />
       </div>
@@ -89,7 +84,7 @@ const MemoView: React.FC<DatabaseObjectResponse> = ({
         <MemoActionMenu parsedContent={parsedContent} memoId={id} onEdit={() => setIsEdited(true)} />
       </div>
       <div className="font-medium mb-2">
-        {parsedContent.map((item, index) => (
+        {parsedContent?.map((item, index) => (
           <p key={index} className="whitespace-pre-wrap break-words w-full leading-6 text-sm">
             {
               item.map((item, index) => {
@@ -111,20 +106,19 @@ const MemoView: React.FC<DatabaseObjectResponse> = ({
           </p>
         ))}
       </div>
-      {memoImages.length > 0 &&
+      {images?.length > 0 &&
         <div className="flex flex-wrap gap-2  mb-2">
           <PhotoProvider
             brokenElement={<div className="w-[164px] h-[164px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
           >
             {
-              memoImages.length === 1 ? <ImageViewer src={memoImages[0]} alt={memoImages[0]}
-                className="max-h-[40vh]" /> : memoImages?.map((url) => (
+              images.length === 1 ? <ImageViewer src={images[0].tmp_url} alt={images[0].tmp_url}
+                className="max-h-[40vh]" /> : images?.map((img) => (
                   <ImageViewer
-                    key={url}
-                    src={url}
-                    alt={url}
+                    key={img.name}
+                    src={img.url}
+                    alt={img.url}
                     className="h-[164px] w-[164px]"
-                    
                   />
                 ))
             }
@@ -132,8 +126,8 @@ const MemoView: React.FC<DatabaseObjectResponse> = ({
         </div>
       }
       {
-        memoTags.length > 0 && <div className='mb-2'>
-          {memoTags?.map((label) => (
+        tags.length > 0 && <div className='mb-2'>
+          {tags?.map((label) => (
             <Tag
               className="bg-blue-100 text-blue-800 font-medium me-0.5 px-1 py-0.5  rounded dark:bg-blue-900 dark:text-blue-300 "
               text={label}

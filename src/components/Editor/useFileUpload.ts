@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useToast } from '../ui/use-toast';
+import { uploadImageAction } from '../../api/larkActions';
+import { produce } from 'immer';
 
 interface ParsedFile {
     source: string;
     size: number;
     file: File;
-    url: string;
+    file_token?: string;
     loading: boolean;
 }
 
@@ -23,21 +25,7 @@ export const useFileUpload = (defaultUrls?: string[]) => {
         return []
     })
     const { toast } = useToast();
-    // 上传到图床
-    const uploadToGallery = (file: File) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        return fetch('/upload', {
-            method: 'POST',
-            body: formData
-        })
-            .then((res: Response) => res.json())
-            .then((data: { src: string }[]) => data[0]?.src)
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
-    const pushFile = (file: File) => {
+    const pushFile = async (file: File) => {
         if (files.length >= 9) {
             toast({
                 title: '最多上传9张图片',
@@ -67,30 +55,21 @@ export const useFileUpload = (defaultUrls?: string[]) => {
             source: URL.createObjectURL(file),
             size: file.size,
             file,
-            url: '',
             loading: true
         };
-
-        setFiles(prevFiles => {
-            const updatedFiles = [...prevFiles, newFile];
-            const index = updatedFiles.length - 1;
-
-            uploadToGallery(file).then((src) => {
-                setFiles(currentFiles => {
-                    return currentFiles.map((item, i) => {
-                        if (i === index) {
-                            console.log(i, '上传到图床', src);
-                            return {
-                                ...item,
-                                url: `https://telegraph-image-bww.pages.dev${src}`,
-                                loading: false
-                            };
-                        }
-                        return item;
-                    });
-                });
+        const formData = new FormData();
+        formData.append("file", file);
+        setFiles((prevFiles: ParsedFile[]) => {
+            const updatedFiles = produce(prevFiles, draft => {
+                draft.push(newFile);
             });
-
+            const index = updatedFiles.length - 1;
+            uploadImageAction(formData).then((file_token) => {
+                setFiles(currentFiles => produce(currentFiles, draft => {
+                    draft[index].loading = false;
+                    draft[index].file_token = file_token
+                }));
+            });
             return updatedFiles;
         });
     }

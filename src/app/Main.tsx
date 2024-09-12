@@ -7,6 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import useCountStore from '@/store/count';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
+import { downloadImageAction, getAppAccessToken } from '../api/larkActions';
 
 
 export default function Home() {
@@ -27,6 +28,8 @@ export default function Home() {
         setEditCodePermission(config.codeConfig.editCode);
         fetchInitData();
         fetchTags();
+        // getAppAccessToken()
+        downloadImageAction('RessbjIW6oK1oTxDY8kcTtxBnPc')
     });
     return (
         <InfiniteScroll
@@ -40,12 +43,12 @@ export default function Home() {
             }
             endMessage={
                 <p className=" text my-4 text-center text-muted-foreground">
-                    <b>---- 已全部加载 {memos.length} 条笔记 ----</b>
+                    <b>---- 已加载 {memos.length} 条笔记 ----</b>
                 </p>
             }
         >
             {memos.map((memo) => (
-                <MemoView key={memo.id} {...memo} />
+                <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
             ))}
         </InfiniteScroll>
     );

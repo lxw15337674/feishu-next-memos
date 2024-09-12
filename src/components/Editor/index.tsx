@@ -12,7 +12,7 @@ import ImageViewer from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
 
 interface Props {
-  onSubmit: (text: string, fileUrls?: string[]) => Promise<any>;
+  onSubmit: (text: string, file_token?: string[]) => Promise<any>;
   onCancel?: () => void;
   defaultValue?: string;
   defaultUrls?: string[];
@@ -50,7 +50,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultUrls }: Props) => {
     const content = editor.value ?? '';
     if (content.trim().length === 0) return;
     setLoading(true);
-    await onSubmit?.(content, files?.map(item => item.url!)).finally(() => {
+    await onSubmit?.(content, files?.map(item => item.file_token!)).finally(() => {
       setLoading(false);
     })
     fetchTags()

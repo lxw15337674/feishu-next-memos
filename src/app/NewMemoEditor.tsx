@@ -2,15 +2,11 @@
 import React from 'react';
 import Editor from '@/components/Editor';
 import { useRequest } from 'ahooks';
-import useMemoStore from '@/store/memo';
+import { createNewMemo } from '../api/larkActions';
 
 const NewMemoEditor: React.FC = () => {
-    const { insertMemo } = useMemoStore();
-    const { runAsync: createRecord } = useRequest(() => new Promise(() => { }), {
+    const { runAsync: createRecord } = useRequest(createNewMemo, {
         manual: true,
-        onSuccess: (data) => {
-            insertMemo(data);
-        }
     })
     return (
         <div >

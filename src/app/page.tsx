@@ -2,7 +2,6 @@ import Main from './Main';
 import SideBar from './SideBar';
 import NewMemoEditor from './NewMemoEditor';
 import ShareCardDialog from '@/components/ShareCard/ShareCardDialog';
-import MobileHeader from '@/components/MobileHeader';
 import LeftSide from '@/components/LeftSide';
 import MemoFilter from '@/components/MemoFilter';
 
@@ -18,9 +17,9 @@ export default async function Home() {
               <NewMemoEditor />
             </div>
             <MemoFilter />
-            {/* <section className="overflow-y-auto overflow-x-hidden flex-grow">
-              <Main recordMap={recordMap} />
-            </section> */}
+            <section className="overflow-y-auto overflow-x-hidden flex-grow">
+              <Main  />
+            </section>
           </div>
         </main>
       </div>
