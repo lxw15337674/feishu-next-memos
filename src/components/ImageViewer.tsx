@@ -1,27 +1,41 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import Icon from './Icon';
 import { PhotoView } from 'react-photo-view';
+import { getImageUrlAction } from '../api/larkActions';
 
 interface ImageProps {
-    src: string;
+    fileToken: string;
     alt: string;
+    // 本地图片地址
+    sourceSrc?: string;
     loading?: boolean;
     className?: string;
     onDelete?: () => void;
 }
 
-const ImageViewer: React.FC<ImageProps> = ({ src, alt, onDelete, className, loading  }) => {
-
-    
+const UploadImage: React.FC<ImageProps> = ({ fileToken, alt, sourceSrc, onDelete, className, loading }) => {
+    const [imageSrc, setImageSrc] = useState('');
+    const [getUrlLoading, setGetUrlLoading] = useState(true);
+    useEffect(() => {
+        if(sourceSrc){
+            return 
+        }
+        setGetUrlLoading(true);
+        getImageUrlAction(fileToken).then((src) => {
+            setImageSrc(src);
+            setGetUrlLoading(false);
+        })
+    }, [fileToken]);
+    const src = sourceSrc || imageSrc;
     return (
         <PhotoView src={src}>
             <div className={`relative  rounded-lg overflow-hidden h-full `}>
-                <img src={src} alt={alt} className={`object-cover rounded-lg   ${loading === true ? 'opacity-50' : ''} ${className}`}
-                onError={(e) => {
-                    e.currentTarget.src = 'https://placehold.co/600x400?text=error'
-                }}
+                <img src={src} alt={alt} className={`object-cover rounded-lg   ${loading ? 'opacity-50' : ''} ${className}`}
+                    onError={(e) => {
+                        e.currentTarget.src = `https://placehold.co/600x400?text=${getUrlLoading ? 'loading' : 'error'}`
+                    }}
                 />
                 {
                     loading && <div className='absolute inset-0 flex justify-center items-center'>
@@ -46,5 +60,5 @@ const ImageViewer: React.FC<ImageProps> = ({ src, alt, onDelete, className, load
     );
 };
 
-export default ImageViewer;
+export default UploadImage;
 

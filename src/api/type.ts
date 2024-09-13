@@ -4,7 +4,7 @@ interface ItemFields {
     type: string;
     link?: string;
   }[];
-  images: {
+  images?: {
     file_token: string;
     name: string;
     size: number;

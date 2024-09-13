@@ -4,6 +4,7 @@ import { Bitable, ItemFields, Memo, newMemo } from './type';
 import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
 import { splitMode } from '../utils/parser';
+import { Readable } from 'stream';
 
 // You need to provide your Feishu App ID and App Secret
 const appId = 'cli_a66aa8de55e4d00c';
@@ -43,11 +44,19 @@ export const getMemosData = async (config: {
             params: {
                 page_size,
                 page_token,
+
+            },
+            data: {
+                sort: [{
+                    'field_name': "created_time",
+                    "desc": true
+                }],
             },
             path: {
                 app_token: appToken,
                 table_id: tableId,
             },
+
         });
         console.log("数据获取成功");
         return data as unknown as Bitable;
@@ -175,17 +184,13 @@ export const uploadImageAction = async (formData: FormData) => {
     }
 };
 
-export const downloadImageAction = async (file_token: string): Promise<any> => {
-    try {
-        const response = await client.drive.media.download({
-            path: {
-                file_token
-            },
-        });
-        return response.writeFile('image').then(res => {
-            console.log(res)
-        })
-    } catch (error) {
-        console.error('Error downloading images:', error);
-    }
+export const getImageUrlAction = async (file_token: string) => {
+    const { data } = await client.drive.media.batchGetTmpDownloadUrl({
+        params: {
+            // sdk type错误
+            file_tokens: file_token as any
+        },
+    },
+    )
+    return data?.tmp_download_urls?.[0]?.tmp_download_url ?? ''
 };

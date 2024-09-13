@@ -98,8 +98,12 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultUrls }: Props) => {
                   files?.map((file, index) => {
                     return <ImageViewer
                       key={file.source}
+                      sourceSrc={file.source}
                       loading={file.loading}
-                      src={file.source} alt='file' className='h-[100px] w-[100px]' onDelete={() => {
+                      fileToken={file.file_token ?? ''}
+                      alt='file'
+                      className='h-[100px] w-[100px]'
+                      onDelete={() => {
                         removeFile(index)
                       }} />
                   })

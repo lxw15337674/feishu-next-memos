@@ -18,13 +18,15 @@ export const useFileUpload = (defaultUrls?: string[]) => {
                 source: url,
                 size: 0,
                 file: new File([], url),
-                url: url,
+                file_token: undefined,
                 loading: false
-            }))
+            }));
         }
-        return []
-    })
+        return [];
+    });
+
     const { toast } = useToast();
+
     const pushFile = async (file: File) => {
         if (files.length >= 9) {
             toast({
@@ -32,7 +34,7 @@ export const useFileUpload = (defaultUrls?: string[]) => {
                 description: '请删除部分图片后再上传',
                 variant: 'destructive',
             });
-            return
+            return;
         }
         if (file.size >= 5 * 1024 * 1024) {
             toast({
@@ -40,72 +42,97 @@ export const useFileUpload = (defaultUrls?: string[]) => {
                 description: '请重新选择文件',
                 variant: 'destructive',
             });
-            return
+            return;
         }
-        // 限制图片文件
         if (!file.type.includes('image')) {
             toast({
                 title: '仅支持图片文件',
                 description: '请重新选择文件',
                 variant: 'destructive',
             });
-            return
+            return;
         }
+
         const newFile: ParsedFile = {
             source: URL.createObjectURL(file),
             size: file.size,
             file,
             loading: true
         };
-        const formData = new FormData();
-        formData.append("file", file);
-        setFiles((prevFiles: ParsedFile[]) => {
+
+        setFiles((prevFiles) => {
             const updatedFiles = produce(prevFiles, draft => {
                 draft.push(newFile);
             });
-            const index = updatedFiles.length - 1;
-            uploadImageAction(formData).then((file_token) => {
-                setFiles(currentFiles => produce(currentFiles, draft => {
-                    draft[index].loading = false;
-                    draft[index].file_token = file_token
-                }));
-            });
             return updatedFiles;
         });
-    }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const file_token = await uploadImageAction(formData);
+            setFiles(currentFiles => produce(currentFiles, draft => {
+                const index = draft.findIndex(f => f.file === file);
+                if (index !== -1) {
+                    draft[index].loading = false;
+                    draft[index].file_token = file_token;
+                }
+            }));
+        } catch (error) {
+            setFiles(currentFiles => produce(currentFiles, draft => {
+                const index = draft.findIndex(f => f.file === file);
+                if (index !== -1) {
+                    draft[index].loading = false;
+                }
+            }));
+            toast({
+                title: '上传失败',
+                description: '请重试',
+                variant: 'destructive',
+            });
+        }
+    };
+
     const uploadFile = () => {
-        // 创建 input 元素
         const inputEl = document.createElement('input');
         inputEl.type = 'file';
-        inputEl.accept = 'image/*'; // 限制图片文件
+        inputEl.accept = 'image/*';
         inputEl.multiple = true;
-        // 处理文件选择
+
         const handleChange = (e: Event) => {
             const target = e.target as HTMLInputElement;
-            const files = Array.from(target.files || [])
-            // 更新文件状态
-            for (let i = 0; i < files.length; i++) {
-                pushFile(files[i])
+            const uploadFiles = Array.from(target.files || []);
+            if (uploadFiles.length > 9) {
+                toast({
+                    title: '最多上传9张图片',
+                    description: '只会保留前9张图片',
+                });
             }
-            // 移除事件监听和 input 元素
+
+            for (let i = 0; i < Math.min(uploadFiles.length, 9); i++) {
+                pushFile(uploadFiles[i]);
+            }
+
             inputEl.removeEventListener('change', handleChange);
             inputEl.remove();
         };
 
-        // 添加事件监听
         inputEl.addEventListener('change', handleChange);
-
-        // 触发文件选择
         inputEl.click();
-    }
-    const removeFile = (index: number) => {
-        files?.splice(index, 1);
-        setFiles([...files!]);
-    }
-    const isUploading = files?.some((file) => file.loading) && files?.length > 0;
-    const reset = () => {
-        setFiles([])
-    }
+    };
 
-    return { files, uploadFile, removeFile, isUploading, reset, setFiles, pushFile } as const
+    const removeFile = (index: number) => {
+        setFiles((prevFiles) => produce(prevFiles, draft => {
+            draft.splice(index, 1);
+        }));
+    };
+
+    const isUploading = files.some(file => file.loading) && files.length > 0;
+
+    const reset = () => {
+        setFiles([]);
+    };
+
+    return { files, uploadFile, removeFile, isUploading, reset, setFiles, pushFile } as const;
 };

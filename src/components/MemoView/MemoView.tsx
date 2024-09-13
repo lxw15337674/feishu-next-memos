@@ -9,10 +9,9 @@ import Editor from '../Editor';
 import useMemoStore from '@/store/memo';
 import { useRequest } from 'ahooks';
 import useConfigStore from '@/store/config';
-import Image from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
 import ImageViewer from '../ImageViewer';
-import { Item, ItemFields } from '../../api/type';
+import { ItemFields } from '../../api/type';
 import { updateMemoAction } from '../../api/larkActions';
 
 const MemoView = ({
@@ -21,13 +20,9 @@ const MemoView = ({
   last_edited_time,
   created_time,
   id,
-  images
+  images=[]
 }: ItemFields & { id: string }) => {
   const [isEdited, setIsEdited] = React.useState(false);
-  const memoImages = useMemo(() => {
-    console.log(images)
-  }, [images]);
-  console.log(memoImages)
   const time = useMemo(() => {
     return convertGMTDateToLocal(new Date(last_edited_time));
   }, [last_edited_time]);
@@ -64,7 +59,7 @@ const MemoView = ({
     return (
       <div className='mb-2'>
         <Editor onSubmit={(text, fileTokens) => updateRecord(id, text, fileTokens)} defaultValue={memoContentText.join('\n')}
-          defaultUrls={images}
+          defaultUrls={images?.map(item => item.tmp_url)}
           onCancel={() => setIsEdited(false)}
         />
       </div>
@@ -106,18 +101,18 @@ const MemoView = ({
           </p>
         ))}
       </div>
-      {images?.length > 0 &&
+      {images?.length  > 0 &&
         <div className="flex flex-wrap gap-2  mb-2">
           <PhotoProvider
             brokenElement={<div className="w-[164px] h-[164px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
           >
             {
-              images.length === 1 ? <ImageViewer src={images[0].tmp_url} alt={images[0].tmp_url}
+              images.length === 1 ? <ImageViewer fileToken={images[0].file_token} alt={images[0].tmp_url}
                 className="max-h-[40vh]" /> : images?.map((img) => (
                   <ImageViewer
                     key={img.name}
-                    src={img.url}
-                    alt={img.url}
+                    fileToken={img.file_token}
+                    alt={img.name}
                     className="h-[164px] w-[164px]"
                   />
                 ))

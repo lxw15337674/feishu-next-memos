@@ -2,8 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { getMemoByIdAction, getMemosData } from '../api/larkActions';
-import { Bitable, Memo, ItemFields } from '../api/type';
-import computed from 'zustand-middleware-computed';
+import { Bitable, Memo } from '../api/type';
 
 interface MemoStore {
   memos: Memo[];

@@ -4,10 +4,8 @@ import useMemoStore from '@/store/memo';
 import useTagStore from '@/store/tag';
 import { useFavicon, useMount, useTitle } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import useCountStore from '@/store/count';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
-import { downloadImageAction, getAppAccessToken } from '../api/larkActions';
 
 
 export default function Home() {
@@ -15,7 +13,6 @@ export default function Home() {
     useFavicon('/favicon.ico')
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
     const { fetchTags } = useTagStore();
-    const { setRecordMap } = useCountStore();
     const { setAccessCodePermission, config, setEditCodePermission } = useConfigStore();
     const router = useRouter();
     useMount(() => {
@@ -28,8 +25,6 @@ export default function Home() {
         setEditCodePermission(config.codeConfig.editCode);
         fetchInitData();
         fetchTags();
-        // getAppAccessToken()
-        downloadImageAction('RessbjIW6oK1oTxDY8kcTtxBnPc')
     });
     return (
         <InfiniteScroll
