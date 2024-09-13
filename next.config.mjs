@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    logging: {
+        fetches: {
+            fullUrl: true,
+            hmrRefreshes: true,
+        },
+    }, // https://nextjs.org/docs/api-reference/next.config.js/logging
     // async rewrites() {
     //     return [
     //         {
