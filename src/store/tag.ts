@@ -1,14 +1,12 @@
 import { TagType } from '@/type';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import { getAllFields } from '../api/larkActions';
+import {  getAllFields } from '../api/larkActions';
 
 interface TagStore {
   tags: TagType[];
   fetchTags: () => Promise<void>;
-  upsertTag: (tagName: string) => Promise<void>;
-  batchUpsertTag: (tagNames: string[]) => Promise<void>;
-  deleteTag: (tagName: string) => Promise<void>;
+  setTags: (tags: TagType[]) => void;
 }
 
 const useTagStore = create<TagStore>()(
@@ -22,9 +20,9 @@ const useTagStore = create<TagStore>()(
           const tags = allFields.items?.find(item => item.field_name === 'tags')?.property?.options as TagType[];
           set({ tags: tags ?? [] });
         },
-        upsertTag: async (tagName: string) => { },
-        batchUpsertTag: async (tagNames: string[]) => { },
-        deleteTag: async (tagName: string) => { },
+        setTags: (tags) => {
+          set({ tags });
+        }
       }),
       {
         name: 'memos-storage',

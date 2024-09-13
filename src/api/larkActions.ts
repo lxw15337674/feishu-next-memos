@@ -4,7 +4,7 @@ import { Bitable, Filter, ItemFields, Memo, newMemo } from './type';
 import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
 import { splitMode } from '../utils/parser';
-import { Readable } from 'stream';
+import { unstable_cache } from 'next/cache';
 
 // You need to provide your Feishu App ID and App Secret
 const appId = 'cli_a66aa8de55e4d00c';
@@ -88,7 +88,7 @@ export const getMemosDataActions = async ({ page_token, filter }: GetMemosDataPa
 };
 
 // 一次性获取所有笔记
-export const getAllMemosActions = async () => {
+export const getAllMemosActions = unstable_cache(async () => {
     const allMemos: Memo[] = [];
     let page_token: string | undefined = undefined;
     do {
@@ -98,7 +98,7 @@ export const getAllMemosActions = async () => {
     } while (page_token);
     console.log("所有数据获取成功", allMemos);
     return allMemos;
-};
+})
 
 export const getAllFields = async () => {
     try {
@@ -115,6 +115,7 @@ export const getAllFields = async () => {
         throw error;
     }
 };
+
 
 export const createNewMemo = async (content: string, fileTokens?: string[]) => {
     try {
@@ -162,6 +163,7 @@ export const getMemoByIdAction = async (record_id: string) => {
                 record_ids: [record_id],
             },
         });
+        console.log("数据获取成功");
         return data?.records?.[0] as unknown as Memo;
     } catch (error) {
         console.error(error);

@@ -4,8 +4,28 @@ import NewMemoEditor from './NewMemoEditor';
 import ShareCardDialog from '@/components/ShareCard/ShareCardDialog';
 import LeftSide from '@/components/LeftSide';
 import MemoFilter from '@/components/MemoFilter';
+import { getAllMemosActions, getMemosDataActions } from '../api/larkActions';
+import { unstable_cache } from 'next/cache';
+import { Memo } from '../api/type';
+
+const getCachedAllMemos = unstable_cache(
+  async () => {
+    const allMemos: Memo[] = [];
+    let page_token: string | undefined = undefined;
+    do {
+      const data = await getMemosDataActions({ page_token });
+      allMemos.push(...data.items);
+      page_token = data.page_token;
+    } while (page_token);
+    console.log("所有数据获取成功", allMemos);
+    return allMemos;
+  },
+  ['memos'],
+  { revalidate: 3600, }
+)
 
 export default async function Home() {
+  const allMemos = await getCachedAllMemos()
   return (
     <div className="flex flex-col md:flex-row max-w-[100vw] min-h-screen">
       {/* <MobileHeader /> */}
@@ -18,7 +38,7 @@ export default async function Home() {
             </div>
             <MemoFilter />
             <section className="overflow-y-auto overflow-x-hidden flex-grow">
-              <Main  />
+              <Main allMemos={allMemos} />
             </section>
           </div>
         </main>

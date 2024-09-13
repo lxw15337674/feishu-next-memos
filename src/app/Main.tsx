@@ -7,14 +7,15 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
 import useCountStore from '../store/count';
+import { Memo } from '../api/type';
 
 
-export default function Home() {
-    useTitle('Nmemos')
+export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
+    useTitle('Fmemos')
     useFavicon('/favicon.ico')
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
     const { fetchTags } = useTagStore();
-    const { getAllMemos } = useCountStore()
+    const { setAllMemos } = useCountStore()
     const { setAccessCodePermission, config, setEditCodePermission } = useConfigStore();
     const router = useRouter();
     useMount(() => {
@@ -27,7 +28,7 @@ export default function Home() {
         setEditCodePermission(config.codeConfig.editCode);
         fetchInitData();
         fetchTags();
-        getAllMemos()
+        setAllMemos(allMemos);
     });
     return (
         <InfiniteScroll

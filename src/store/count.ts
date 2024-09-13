@@ -2,11 +2,10 @@ import { format } from 'date-fns';
 import { create } from 'zustand';
 import computed from 'zustand-middleware-computed';
 import { Memo } from '../api/type';
-import {  getAllMemosActions } from '../api/larkActions';
 
 interface MemoStore {
     allMemos: Memo[];
-    getAllMemos: () => Promise<void>;
+    setAllMemos: (memos:Memo[]) => Promise<void>;
 }
 
 interface ComputedState {
@@ -18,9 +17,8 @@ const useCountStore = create(
     computed<MemoStore, ComputedState>(
         (set) => ({
             allMemos: [],
-            getAllMemos: async () => {
-                const data = await getAllMemosActions()
-                set({ allMemos: data });
+            setAllMemos: async (memos) => {
+                set({ allMemos: memos });
             }
         }),
         {
