@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { getMemoByIdAction, getMemosData } from '../api/larkActions';
+import { getMemoByIdAction, getMemosDataActions } from '../api/larkActions';
 import { Bitable, Memo } from '../api/type';
+import useFilterStore from './filter';
 
 interface MemoStore {
   memos: Memo[];
@@ -43,8 +44,8 @@ const useMemoStore = create<MemoStore>()(
         },
         // 获取初始化数据
         fetchInitData: async () => {
-          const databases = await getMemosData({
-            // filter: useFilterStore.getState().filterParams,
+          const databases = await getMemosDataActions({
+            filter: useFilterStore.getState().filterParams,
           });
           set({
             databases,
@@ -55,9 +56,9 @@ const useMemoStore = create<MemoStore>()(
         fetchPagedData: async () => {
           const page_token = get().databases.page_token;
           if (page_token) {
-            const databases = await getMemosData({
+            const databases = await getMemosDataActions({
               page_token,
-              // filter: useFilterStore.getState().filterParams,
+              filter: useFilterStore.getState().filterParams,
             });
             set((state) => {
               state.databases = databases;

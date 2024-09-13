@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { create } from 'zustand';
 import computed from 'zustand-middleware-computed';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { Filter } from '../api/type';
 
 
 export enum ImageFilter {
@@ -82,33 +83,26 @@ const useFilterStore = create(
             return undefined;
           }
 
-          const filter = [
+          const conditions = [
             ...state.tagFilter.map((item) => ({
-              property: 'tags',
-              multi_select: {
-                contains: item,
-              },
+              field_name: 'tags',
+              operator: 'contains',
+              value:[item]
             })),
-            state.timeFilterText && {
-              timestamp: 'created_time',
-              created_time: {
-                equals: state.timeFilterText,
-              },
-            },
             state.textFilter && {
-              property: 'content',
-              rich_text: {
-                contains: state.textFilter,
-              },
+              field_name: 'content',
+              operator: 'contains',
+              value: [state.textFilter]
             },
             state.imageFilter !== ImageFilter.NO_FilTER && {
-              property: 'images',
-              rich_text: {
-                [state.imageFilter === ImageFilter.HAS_IMAGE ? 'is_not_empty' : 'is_empty']: true,
-              },
+              field_name: 'images',
+              operator: state.imageFilter === ImageFilter.HAS_IMAGE ? 'is_not_empty' : 'is_empty',
             },
-          ].filter(Boolean); // Remove falsy values from the array
-          return filter.length > 0 ? { and: filter } : undefined;
+          ].filter(Boolean) as Filter['conditions'];
+          return conditions?.length ?? 0 > 0 ? {
+            "conjunction": "and",
+            "conditions": conditions
+          } : undefined;
         }
       },
     ),

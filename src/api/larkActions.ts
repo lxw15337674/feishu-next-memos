@@ -1,6 +1,6 @@
 'use server';
 import * as lark from '@larksuiteoapi/node-sdk';
-import { Bitable, ItemFields, Memo, newMemo } from './type';
+import { Bitable, Filter, ItemFields, Memo, newMemo } from './type';
 import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
 import { splitMode } from '../utils/parser';
@@ -33,10 +33,15 @@ export const getAppAccessToken = async () => {
         console.error('Error getting app access token:', error);
     }
 }
-export const getMemosData = async (config: {
+
+export const getRecordsActions = async (config: {
     page_token?: string;
     page_size?: number;
-    filter?: any;
+    filter?: Filter;
+    sort?: {
+        field_name: string;
+        desc: boolean;
+    }[]
 }) => {
     const { page_token = undefined, page_size = 20, filter } = config;
     try {
@@ -51,12 +56,12 @@ export const getMemosData = async (config: {
                     'field_name': "created_time",
                     "desc": true
                 }],
+                filter
             },
             path: {
                 app_token: appToken,
                 table_id: tableId,
             },
-
         });
         console.log("数据获取成功");
         return data as unknown as Bitable;
@@ -64,6 +69,35 @@ export const getMemosData = async (config: {
         console.error("数据获取失败:", error);
         throw error;
     }
+};
+
+
+interface GetMemosDataParams {
+    page_token?: string;
+    filter?: Filter;
+}
+export const getMemosDataActions = async ({ page_token, filter }: GetMemosDataParams = {}) => {
+    return await getRecordsActions({
+        page_token,
+        sort: [{
+            'field_name': "created_time",
+            "desc": true
+        }],
+        filter
+    });
+};
+
+// 一次性获取所有笔记
+export const getAllMemosActions = async () => {
+    const allMemos: Memo[] = [];
+    let page_token: string | undefined = undefined;
+    do {
+        const data = await getMemosDataActions({ page_token });
+        allMemos.push(...data.items);
+        page_token = data.page_token;
+    } while (page_token);
+    console.log("所有数据获取成功", allMemos);
+    return allMemos;
 };
 
 export const getAllFields = async () => {
@@ -184,7 +218,9 @@ export const uploadImageAction = async (formData: FormData) => {
     }
 };
 
+// todo 改成支持多个file_token,https://github.com/larksuite/node-sdk/issues/106
 export const getImageUrlAction = async (file_token: string) => {
+    return ''
     const { data } = await client.drive.media.batchGetTmpDownloadUrl({
         params: {
             // sdk type错误

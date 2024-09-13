@@ -13,8 +13,8 @@ interface ItemFields {
     url: string;
   }[],
   tags: string[];
-  "created_time": number;
-  "last_edited_time": number;
+  "created_time"?: number;
+  "last_edited_time?": number;
 }
 
 export interface newMemo {
@@ -37,4 +37,22 @@ interface Bitable {
   total: number;
 }
 
-export type { Bitable, Memo, ItemFields };
+
+interface Filter {
+  conjunction?: "and" | "or";
+  conditions?: Array<{
+    field_name: string;
+    operator: "is" | "isNot" | "contains" | "doesNotContain" | "isEmpty" | "isNotEmpty" | "isGreater" | "isGreaterEqual" | "isLess" | "isLessEqual" | "like" | "in";
+    value?: Array<string>;
+  }>;
+  children?: Array<{
+    conjunction: "and" | "or";
+    conditions?: Array<{
+      field_name: string;
+      operator: "is" | "isNot" | "contains" | "doesNotContain" | "isEmpty" | "isNotEmpty" | "isGreater" | "isGreaterEqual" | "isLess" | "isLessEqual" | "like" | "in";
+      value?: Array<string>;
+    }>;
+  }>;
+};
+
+export type { Bitable, Memo, ItemFields, Filter };

@@ -3,6 +3,7 @@ import Tag from '@/components/Tag';
 import useCountStore from '@/store/count';
 import useFilterStore from '@/store/filter';
 import { useMemo } from 'react';
+import useTagStore from '../../../store/tag';
 
 interface Props {
   tag: TagType;
@@ -22,7 +23,6 @@ export const TagItemContainer = ({ tag }: Props) => {
       setFilter([...tagFilter, tag.name]);
     }
   };
-
   return (
     <div
       className="relative flex flex-row justify-between items-center  leading-6 py-0.5 rounded-lg text-sm select-none  cursor-pointer w-full"
@@ -38,7 +38,7 @@ export const TagItemContainer = ({ tag }: Props) => {
         <Tag className="truncate " text={tag.name}>
           {tag.name}
         </Tag>
-        <div className="ml-auto">{memosByTag.get(tag.name) || 0}</div>
+        <div className="ml-auto">{memosByTag?.get?.(tag.name) || 0}</div>
       </div>
     </div>
   );

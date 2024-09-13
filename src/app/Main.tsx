@@ -6,6 +6,7 @@ import { useFavicon, useMount, useTitle } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
+import useCountStore from '../store/count';
 
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
     useFavicon('/favicon.ico')
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
     const { fetchTags } = useTagStore();
+    const { getAllMemos } = useCountStore()
     const { setAccessCodePermission, config, setEditCodePermission } = useConfigStore();
     const router = useRouter();
     useMount(() => {
@@ -25,6 +27,7 @@ export default function Home() {
         setEditCodePermission(config.codeConfig.editCode);
         fetchInitData();
         fetchTags();
+        getAllMemos()
     });
     return (
         <InfiniteScroll
