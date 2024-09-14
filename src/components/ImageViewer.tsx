@@ -13,13 +13,11 @@ interface ImageProps {
 }
 
 const UploadImage: React.FC<ImageProps> = ({ alt, src='', onDelete, className, loading }) => {
-    debugger
     return (
         <PhotoView src={src}>
             <div className={`relative  rounded-lg overflow-hidden h-full `}>
                 <img src={src} alt={alt} className={`object-cover rounded-lg   ${loading ? 'opacity-50' : ''} ${className}`}
                     onError={(e) => {
-                        debugger
                         e.currentTarget.src = `https://placehold.co/600x400?text=loading`
                     }}
                 />

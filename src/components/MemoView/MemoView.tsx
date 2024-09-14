@@ -52,13 +52,12 @@ const MemoView = ({
   useEffect(() => {
     const maxBatchSize = 5; // 每次请求的最大数量
     const fetchImageUrls = async () => {
-      const newImages = images.filter(image => !urlMapActions.get(image.file_token));
-      for (let i = 0; i < newImages.length; i += maxBatchSize) {
-        const batchImages = newImages.slice(i, i + maxBatchSize);
-        const urls = await getImageUrlAction(batchImages.map(item => item.file_token));
-        for (let i = 0; i < urls.length; i++) {
-          urlMapActions.set(batchImages[i].file_token, urls[i])
-        }
+      for (let i = 0; i < images.length; i += maxBatchSize) {
+        const batchImages = images.slice(i, i + maxBatchSize);
+        const data = await getImageUrlAction(batchImages.map(item => item.file_token));
+        data?.forEach((item) => {
+          urlMapActions.set(item.file_token, item.tmp_download_url)
+        })
       }
     };
     fetchImageUrls();
@@ -68,7 +67,7 @@ const MemoView = ({
       return parseContent(item)
     })
   }, [memoContentText])
-
+  console.log(images)
 
   if (isEdited) {
     return (

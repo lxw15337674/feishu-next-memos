@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { uploadFile } from "../../utils/file";
 import { toast } from "../ui/use-toast";
-import { PromiseQueue, randomSleep } from "../../utils/promiseQueue";
-import { createPageInDatabase } from "../../api/actions";
+import { createNewMemo } from "../../api/larkActions";
 
 const useImportMemos = () => {
     const [memos, setMemos] = useState(0);
@@ -22,7 +21,7 @@ const useImportMemos = () => {
                         const memos = JSON.parse(event.target?.result as string);
                         setMemos(memos.length);
                         for (let i = 0; i < memos.length; i++) {
-                            await createPageInDatabase(memos[i]);
+                            await createNewMemo(memos[i]);
                             setImportedMemos((prev) => prev + 1);
                         }
                         toast({

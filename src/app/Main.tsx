@@ -46,7 +46,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
                 </p>
             }
         >
-            {memos.map((memo) => (
+            {memos.slice(0,1).map((memo) => (
                 <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
             ))}
         </InfiniteScroll>

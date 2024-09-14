@@ -5,34 +5,18 @@ import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
 import { splitMode } from '../utils/parser';
 import { unstable_cache } from 'next/cache';
-import qs from 'qs';
-// You need to provide your Feishu App ID and App Secret
-const appId = 'cli_a66aa8de55e4d00c';
-const appSecret = 'yB2jYZls1J9Y0KxHY8BwJfLqmfmrfMgT';
-const appToken = 'HRbGbAGmbazCS4sUu51cwx2bndc';
-const tableId = 'tbl70rRSqKoZuaK6';
+const APP_ID = process.env.APP_ID as string
+const APP_SECRET = process.env.APP_SECRET as string
+const APP_TOKEN = process.env.APP_TOKEN as string
+const TABLE_ID = process.env.TABLE_ID as string
 
 // Create a new Lark Client instance
 const client = new lark.Client({
-    appId: appId,
-    appSecret: appSecret,
+    appId: APP_ID,
+    appSecret: APP_SECRET,
     appType: lark.AppType.SelfBuild,
     domain: lark.Domain.Feishu,
 });
-
-export const getAppAccessToken = async () => {
-    try {
-        const data: any = await client.auth.appAccessToken.internal({
-            data: {
-                app_id: appId,
-                app_secret: appSecret,
-            },
-        })
-        return data?.app_access_token as string;
-    } catch (error) {
-        console.error('Error getting app access token:', error);
-    }
-}
 
 export const getRecordsActions = async (config: {
     page_token?: string;
@@ -59,8 +43,8 @@ export const getRecordsActions = async (config: {
                 filter
             },
             path: {
-                app_token: appToken,
-                table_id: tableId,
+                app_token: APP_TOKEN,
+                table_id: TABLE_ID,
             },
         });
         console.log("数据获取成功");
@@ -104,8 +88,8 @@ export const getAllFields = async () => {
     try {
         const { data } = await client.bitable.appTableField.list({
             path: {
-                app_token: appToken,
-                table_id: tableId,
+                app_token: APP_TOKEN,
+                table_id: TABLE_ID,
             },
         });
         console.log("标签获取成功");
@@ -122,8 +106,8 @@ export const createNewMemo = async (content: string, fileTokens?: string[]) => {
         const fields = splitMode(content, fileTokens) as Record<string, any>;
         await client.bitable.appTableRecord.create({
             path: {
-                app_token: appToken,
-                table_id: tableId,
+                app_token: APP_TOKEN,
+                table_id: TABLE_ID,
             },
             data: {
                 fields,
@@ -140,8 +124,8 @@ export const deleteMemo = async (record_id: string) => {
     try {
         await client.bitable.appTableRecord.delete({
             path: {
-                app_token: appToken,
-                table_id: tableId,
+                app_token: APP_TOKEN,
+                table_id: TABLE_ID,
                 record_id,
             },
         });
@@ -156,8 +140,8 @@ export const getMemoByIdAction = async (record_id: string) => {
     try {
         const { data } = await client.bitable.appTableRecord.batchGet({
             path: {
-                app_token: appToken,
-                table_id: tableId,
+                app_token: APP_TOKEN,
+                table_id: TABLE_ID,
             },
             data: {
                 record_ids: [record_id],
@@ -175,8 +159,8 @@ export const updateMemoAction = async (record_id: string, content: string, fileT
         const fields = splitMode(content, fileTokens) as Record<string, any>;
         const { data } = await client.bitable.appTableRecord.update({
             path: {
-                app_token: appToken,
-                table_id: tableId,
+                app_token: APP_TOKEN,
+                table_id: TABLE_ID,
                 record_id,
             },
             data: {
@@ -207,7 +191,7 @@ export const uploadImageAction = async (formData: FormData) => {
         const file = formData.get("file") as File;
         const data = await client.drive.media.uploadAll({
             data: {
-                parent_node: appToken,
+                parent_node: APP_TOKEN,
                 parent_type: 'bitable_image',
                 size: file.size,
                 file: Buffer.from(await file.arrayBuffer()),
@@ -219,6 +203,10 @@ export const uploadImageAction = async (formData: FormData) => {
         console.error(e);
     }
 };
+interface ImageData {
+    file_token: string;
+    tmp_download_url: string;
+}
 
 export const getImageUrlAction = async (file_tokens: string[]) => {
     // 处理多个 file_token，将它们拼接成 "file_tokens={token1}&file_tokens={token2}" 的形式
@@ -228,7 +216,6 @@ export const getImageUrlAction = async (file_tokens: string[]) => {
         method: 'get',
         url: `https://open.feishu.cn/open-apis/drive/v1/medias/batch_get_tmp_download_url?${queryString}`,
     });
-    const urls = data?.tmp_download_urls?.map((item: any) => item.tmp_download_url) as string[];
     console.log("图片获取成功");
-    return urls;
+    return data?.tmp_download_urls as ImageData[]
 };

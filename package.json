@@ -41,7 +41,6 @@
     "next": "14.2.3",
     "next-themes": "^0.3.0",
     "pinyin-pro": "^3.24.2",
-    "qs": "^6.13.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
@@ -51,7 +50,7 @@
     "tailwindcss-animate": "^1.0.7",
     "textarea-caret": "^3.1.0",
     "unsplash-js": "^7.0.19",
-    "vaul": "^0.9.2",
+    "vaul": "^0.9.3",
     "zustand": "^4.5.5",
     "zustand-middleware-computed": "^1.2.1"
   },
@@ -59,11 +58,10 @@
     "@babel/preset-typescript": "^7.24.7",
     "@faker-js/faker": "^8.4.1",
     "@jest/globals": "^29.7.0",
-    "@next/eslint-plugin-next": "^14.2.9",
+    "@next/eslint-plugin-next": "^14.2.11",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^15.0.7",
     "@types/node": "^20.16.5",
-    "@types/qs": "^6.9.15",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/react-mentions": "^4.4.0",
@@ -76,7 +74,8 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.45",
-    "tailwindcss": "^3.4.10",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.11",
     "typescript": "^5.6.2"
   }
 }

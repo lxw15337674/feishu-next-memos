@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 // import { getRandomImage } from "@/api/actions";
 import Icon from "../Icon";
-import { getRandomImage } from "@/api/actions";
+import { getRandomImage } from "@/api/larkActions";
 
 const ShardCards = [
     {
