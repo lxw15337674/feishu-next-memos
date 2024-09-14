@@ -41,3 +41,4 @@ next-env.d.ts
 .swc
 
 .vercel
+.env*.local

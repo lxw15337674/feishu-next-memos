@@ -10,7 +10,6 @@ const APP_SECRET = process.env.APP_SECRET as string
 const APP_TOKEN = process.env.APP_TOKEN as string
 const TABLE_ID = process.env.TABLE_ID as string
 
-// Create a new Lark Client instance
 const client = new lark.Client({
     appId: APP_ID,
     appSecret: APP_SECRET,
