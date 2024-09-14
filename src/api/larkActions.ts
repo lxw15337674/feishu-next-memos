@@ -5,7 +5,7 @@ import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
 import { splitMode } from '../utils/parser';
 import { unstable_cache } from 'next/cache';
-
+import qs from 'qs';
 // You need to provide your Feishu App ID and App Secret
 const appId = 'cli_a66aa8de55e4d00c';
 const appSecret = 'yB2jYZls1J9Y0KxHY8BwJfLqmfmrfMgT';
@@ -96,7 +96,7 @@ export const getAllMemosActions = unstable_cache(async () => {
         allMemos.push(...data.items);
         page_token = data.page_token;
     } while (page_token);
-    console.log("所有数据获取成功", allMemos);
+    console.log("所有数据获取成功");
     return allMemos;
 })
 
@@ -220,15 +220,15 @@ export const uploadImageAction = async (formData: FormData) => {
     }
 };
 
-// todo 改成支持多个file_token,https://github.com/larksuite/node-sdk/issues/106
-export const getImageUrlAction = async (file_token: string) => {
-    return ''
-    const { data } = await client.drive.media.batchGetTmpDownloadUrl({
-        params: {
-            // sdk type错误
-            file_tokens: file_token as any
-        },
-    },
-    )
-    return data?.tmp_download_urls?.[0]?.tmp_download_url ?? ''
+export const getImageUrlAction = async (file_tokens: string[]) => {
+    // 处理多个 file_token，将它们拼接成 "file_tokens={token1}&file_tokens={token2}" 的形式
+    const queryString = file_tokens.map(token => `file_tokens=${token}`).join('&');
+
+    const { data } = await client.request({
+        method: 'get',
+        url: `https://open.feishu.cn/open-apis/drive/v1/medias/batch_get_tmp_download_url?${queryString}`,
+    });
+    const urls = data?.tmp_download_urls?.map((item: any) => item.tmp_download_url) as string[];
+    console.log("图片获取成功");
+    return urls;
 };

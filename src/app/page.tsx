@@ -17,7 +17,7 @@ const getCachedAllMemos = unstable_cache(
       allMemos.push(...data.items);
       page_token = data.page_token;
     } while (page_token);
-    console.log("所有数据获取成功", allMemos);
+    console.log("所有数据获取成功");
     return allMemos;
   },
   ['memos'],

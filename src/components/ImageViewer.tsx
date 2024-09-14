@@ -3,38 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import Icon from './Icon';
 import { PhotoView } from 'react-photo-view';
-import { getImageUrlAction } from '../api/larkActions';
 
 interface ImageProps {
-    fileToken: string;
     alt: string;
-    // 本地图片地址
-    sourceSrc?: string;
+    src?: string;
     loading?: boolean;
     className?: string;
     onDelete?: () => void;
 }
 
-const UploadImage: React.FC<ImageProps> = ({ fileToken, alt, sourceSrc, onDelete, className, loading }) => {
-    const [imageSrc, setImageSrc] = useState('');
-    const [getUrlLoading, setGetUrlLoading] = useState(true);
-    useEffect(() => {
-        if(sourceSrc){
-            return 
-        }
-        setGetUrlLoading(true);
-        getImageUrlAction(fileToken).then((src) => {
-            setImageSrc(src);
-            setGetUrlLoading(false);
-        })
-    }, [fileToken]);
-    const src = sourceSrc || imageSrc;
+const UploadImage: React.FC<ImageProps> = ({ alt, src='', onDelete, className, loading }) => {
+    debugger
     return (
         <PhotoView src={src}>
             <div className={`relative  rounded-lg overflow-hidden h-full `}>
                 <img src={src} alt={alt} className={`object-cover rounded-lg   ${loading ? 'opacity-50' : ''} ${className}`}
                     onError={(e) => {
-                        e.currentTarget.src = `https://placehold.co/600x400?text=${getUrlLoading ? 'loading' : 'error'}`
+                        debugger
+                        e.currentTarget.src = `https://placehold.co/600x400?text=loading`
                     }}
                 />
                 {

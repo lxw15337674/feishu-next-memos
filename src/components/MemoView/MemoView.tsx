@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Tag from '../Tag';
 import MemoActionMenu from './MemoActionMenu';
 import { Card } from '@/components/ui/card';
@@ -7,12 +7,12 @@ import { convertGMTDateToLocal, parseContent } from '@/utils/parser';
 import "@github/relative-time-element";
 import Editor from '../Editor';
 import useMemoStore from '@/store/memo';
-import { useRequest } from 'ahooks';
+import { useMap, useRequest } from 'ahooks';
 import useConfigStore from '@/store/config';
 import { PhotoProvider } from 'react-photo-view';
 import ImageViewer from '../ImageViewer';
 import { ItemFields } from '../../api/type';
-import { updateMemoAction } from '../../api/larkActions';
+import { getImageUrlAction, updateMemoAction } from '../../api/larkActions';
 
 const MemoView = ({
   tags = [],
@@ -20,11 +20,12 @@ const MemoView = ({
   last_edited_time,
   created_time,
   id,
-  images=[]
+  images = []
 }: ItemFields & { id: string }) => {
-  const [isEdited, setIsEdited] = React.useState(false);
+  const [isEdited, setIsEdited] = useState(false);
+  const [urlMap, urlMapActions] = useMap<string, string>()
   const time = useMemo(() => {
-    return convertGMTDateToLocal(new Date(last_edited_time));
+    return last_edited_time ? convertGMTDateToLocal(new Date(last_edited_time)) : ' ';
   }, [last_edited_time]);
   const { updateMemo } = useMemoStore();
   const { config } = useConfigStore()
@@ -38,7 +39,7 @@ const MemoView = ({
     }
   })
   const isRecentTime = useMemo(() => {
-    return Date.now() - new Date(created_time).getTime() < 1000 * 60 * 60 * 24
+    return created_time ? Date.now() - new Date(created_time).getTime() < 1000 * 60 * 60 * 24 : false;
   }, [created_time])
 
   const memoContentText = useMemo(() => {
@@ -48,18 +49,32 @@ const MemoView = ({
   }, [
     content
   ])
-
+  useEffect(() => {
+    const maxBatchSize = 5; // 每次请求的最大数量
+    const fetchImageUrls = async () => {
+      const newImages = images.filter(image => !urlMapActions.get(image.file_token));
+      for (let i = 0; i < newImages.length; i += maxBatchSize) {
+        const batchImages = newImages.slice(i, i + maxBatchSize);
+        const urls = await getImageUrlAction(batchImages.map(item => item.file_token));
+        for (let i = 0; i < urls.length; i++) {
+          urlMapActions.set(batchImages[i].file_token, urls[i])
+        }
+      }
+    };
+    fetchImageUrls();
+  }, [images]);
   const parsedContent = useMemo(() => {
     return memoContentText?.map((item) => {
       return parseContent(item)
     })
   }, [memoContentText])
 
+
   if (isEdited) {
     return (
       <div className='mb-2'>
         <Editor onSubmit={(text, fileTokens) => updateRecord(id, text, fileTokens)} defaultValue={memoContentText.join('\n')}
-          defaultUrls={images?.map(item => item.tmp_url)}
+          defaultUrls={images.map(item => urlMap.get(item.file_token)!)}
           onCancel={() => setIsEdited(false)}
         />
       </div>
@@ -72,7 +87,7 @@ const MemoView = ({
           {time}
           {isRecentTime &&
             <span className='ml-2'>
-              ( <relative-time datetime={new Date(created_time).toISOString()} tense="past" /> )
+              {created_time && (<relative-time datetime={new Date(created_time).toISOString()} tense="past" />)}
             </span>
           }
         </div>
@@ -101,18 +116,18 @@ const MemoView = ({
           </p>
         ))}
       </div>
-      {images?.length  > 0 &&
+      {images.length > 0 &&
         <div className="flex flex-wrap gap-2  mb-2">
           <PhotoProvider
             brokenElement={<div className="w-[164px] h-[164px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
           >
             {
-              images.length === 1 ? <ImageViewer fileToken={images[0].file_token} alt={images[0].tmp_url}
-                className="max-h-[40vh]" /> : images?.map((img) => (
+              images.length === 1 ? <ImageViewer alt={images[0].file_token} src={urlMap.get(images[0].file_token)!}
+                className="max-h-[40vh]" /> : images?.map((image) => (
                   <ImageViewer
-                    key={img.name}
-                    fileToken={img.file_token}
-                    alt={img.name}
+                    key={image.file_token}
+                    src={urlMap.get(image.file_token)!}
+                    alt={image.file_token}
                     className="h-[164px] w-[164px]"
                   />
                 ))

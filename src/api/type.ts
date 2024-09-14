@@ -8,13 +8,12 @@ interface ItemFields {
     file_token: string;
     name: string;
     size: number;
-    tmp_url: string;
     type: string;
-    url: string;
+    url?: string;
   }[],
   tags: string[];
   "created_time"?: number;
-  "last_edited_time?": number;
+  "last_edited_time"?: number;
 }
 
 export interface newMemo {

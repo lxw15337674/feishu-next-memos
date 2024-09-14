@@ -69,7 +69,7 @@ const useMemoStore = create<MemoStore>()(
       })),
       {
         name: 'memos-storage', // 存储名称
-        storage: createJSONStorage(() => sessionStorage), // 使用sessionStorage存储
+        storage: createJSONStorage(() => localStorage), // 使用sessionStorage存储
       }
     ),
     {
