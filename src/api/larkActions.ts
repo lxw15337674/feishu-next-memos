@@ -1,6 +1,6 @@
 'use server';
 import * as lark from '@larksuiteoapi/node-sdk';
-import { Bitable, Filter, ItemFields, Memo, newMemo } from './type';
+import { Bitable, Filter, Memo } from './type';
 import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
 import { splitMode } from '../utils/parser';
