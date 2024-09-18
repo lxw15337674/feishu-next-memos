@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { create } from 'zustand';
 import computed from 'zustand-middleware-computed';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -82,12 +82,11 @@ const useFilterStore = create(
           if (!state.hasFilter) {
             return undefined;
           }
-
           const conditions = [
             ...state.tagFilter.map((item) => ({
               field_name: 'tags',
               operator: 'contains',
-              value:[item]
+              value: [item]
             })),
             state.textFilter && {
               field_name: 'content',
@@ -96,8 +95,17 @@ const useFilterStore = create(
             },
             state.imageFilter !== ImageFilter.NO_FilTER && {
               field_name: 'images',
-              operator: state.imageFilter === ImageFilter.HAS_IMAGE ? 'is_not_empty' : 'is_empty',
+              operator: state.imageFilter === ImageFilter.HAS_IMAGE ? 'isNotEmpty' : 'isEmpty',
+              value: []
             },
+            state.timeFilter && {
+              "field_name": "created_time",
+              "operator": "is",
+              "value": [
+                "ExactDate",
+                format(state.timeFilter, 'T')
+              ]
+            }
           ].filter(Boolean) as Filter['conditions'];
           return conditions?.length ?? 0 > 0 ? {
             "conjunction": "and",

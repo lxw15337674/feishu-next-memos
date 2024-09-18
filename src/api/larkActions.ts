@@ -32,21 +32,20 @@ export const getRecordsActions = async (config: {
             params: {
                 page_size,
                 page_token,
-
             },
             data: {
                 sort: [{
                     'field_name': "created_time",
-                    "desc": true
+                    "desc": true,
                 }],
-                filter
+                filter,
             },
             path: {
                 app_token: APP_TOKEN,
                 table_id: TABLE_ID,
             },
         });
-        console.log("数据获取成功");
+        console.log("数据获取成功",data);
         return data as unknown as Bitable;
     } catch (error) {
         console.error("数据获取失败:", error);

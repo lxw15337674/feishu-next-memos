@@ -43,14 +43,14 @@ interface Filter {
   conditions?: Array<{
     field_name: string;
     operator: "is" | "isNot" | "contains" | "doesNotContain" | "isEmpty" | "isNotEmpty" | "isGreater" | "isGreaterEqual" | "isLess" | "isLessEqual" | "like" | "in";
-    value?: Array<string>;
+    value: Array<string>;
   }>;
   children?: Array<{
     conjunction: "and" | "or";
     conditions?: Array<{
       field_name: string;
       operator: "is" | "isNot" | "contains" | "doesNotContain" | "isEmpty" | "isNotEmpty" | "isGreater" | "isGreaterEqual" | "isLess" | "isLessEqual" | "like" | "in";
-      value?: Array<string>;
+      value: Array<string>;
     }>;
   }>;
 };

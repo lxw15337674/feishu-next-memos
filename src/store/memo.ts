@@ -47,10 +47,12 @@ const useMemoStore = create<MemoStore>()(
           const databases = await getMemosDataActions({
             filter: useFilterStore.getState().filterParams,
           });
-          set({
-            databases,
-            memos: databases.items
-          });
+          if (databases) {
+            set({
+              databases,
+              memos: databases?.items ?? []
+            })
+          }
         },
         // 获取分页数据
         fetchPagedData: async () => {
@@ -69,7 +71,7 @@ const useMemoStore = create<MemoStore>()(
       })),
       {
         name: 'memos-storage', // 存储名称
-        storage: createJSONStorage(() => localStorage), // 使用sessionStorage存储
+        storage: createJSONStorage(() => localStorage),
       }
     ),
     {
