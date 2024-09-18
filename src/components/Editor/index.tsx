@@ -10,22 +10,23 @@ import { useDebounceFn, useEventListener, useKeyPress } from 'ahooks';
 import { useFileUpload } from './useFileUpload';
 import ImageViewer from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
+import { ImageType } from '../../api/type';
 
 interface Props {
   onSubmit: (text: string, file_token?: string[]) => Promise<any>;
   onCancel?: () => void;
   defaultValue?: string;
-  defaultUrls?: string[];
+  images: ImageType[]
 }
 export interface ReplaceTextFunction {
   (text: string, start: number, end: number, cursorOffset?: number): void
 }
 
-const Editor = ({ onSubmit, defaultValue, onCancel, defaultUrls }: Props) => {
+const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
   const { fetchTags } = useTagStore();
   const [loading, setLoading] = React.useState(false);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
-  const { files, uploadFile, removeFile, isUploading, reset, pushFile } = useFileUpload(defaultUrls)
+  const { files, uploadFile, removeFile, isUploading, reset, pushFile } = useFileUpload(images)
   const { run: replaceText } = useDebounceFn<ReplaceTextFunction>((text, start, end, offset = 0) => {
     const editor = editorRef;
     if (editor) {
@@ -50,6 +51,8 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultUrls }: Props) => {
     const content = editor.value ?? '';
     if (content.trim().length === 0) return;
     setLoading(true);
+    console.log('files', files)
+    debugger
     await onSubmit?.(content, files?.map(item => item.file_token!)).finally(() => {
       setLoading(false);
     })

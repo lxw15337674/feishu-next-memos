@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import { uploadImageAction } from '../../api/larkActions';
-import { produce } from 'immer';
+import { useImmer } from 'use-immer';
+import { ImageType } from '../../api/type';
 
 interface ParsedFile {
     source: string;
@@ -11,18 +12,15 @@ interface ParsedFile {
     loading: boolean;
 }
 
-export const useFileUpload = (defaultUrls?: string[]) => {
-    const [files, setFiles] = useState<ParsedFile[]>(() => {
-        if (defaultUrls) {
-            return defaultUrls.map(url => ({
-                source: url,
-                size: 0,
-                file: new File([], url),
-                file_token: undefined,
-                loading: false
-            }));
-        }
-        return [];
+export const useFileUpload = (defaultImages: ImageType[] = []) => {
+    const [files, setFiles] = useImmer<ParsedFile[]>(() => {
+        return defaultImages.map(image => ({
+            source: image.url ?? image.name,
+            size: 0,
+            file: new File([], image.name),
+            file_token: image.file_token,
+            loading: false
+        }));
     });
 
     const { toast } = useToast();
@@ -52,19 +50,16 @@ export const useFileUpload = (defaultUrls?: string[]) => {
             });
             return;
         }
-
+        const source = URL.createObjectURL(file);
         const newFile: ParsedFile = {
-            source: URL.createObjectURL(file),
+            source,
             size: file.size,
             file,
             loading: true
         };
 
-        setFiles((prevFiles) => {
-            const updatedFiles = produce(prevFiles, draft => {
-                draft.push(newFile);
-            });
-            return updatedFiles;
+        setFiles(draft => {
+            draft.push(newFile);
         });
 
         const formData = new FormData();
@@ -72,20 +67,22 @@ export const useFileUpload = (defaultUrls?: string[]) => {
 
         try {
             const file_token = await uploadImageAction(formData);
-            setFiles(currentFiles => produce(currentFiles, draft => {
-                const index = draft.findIndex(f => f.file === file);
+            setFiles(draft => {
+                console.log(draft);
+                debugger
+                const index = draft.findIndex(f => f.source === source);
                 if (index !== -1) {
                     draft[index].loading = false;
                     draft[index].file_token = file_token;
                 }
-            }));
+            });
         } catch (error) {
-            setFiles(currentFiles => produce(currentFiles, draft => {
-                const index = draft.findIndex(f => f.file === file);
+            setFiles(draft => {
+                const index = draft.findIndex(f => f.source === source);
                 if (index !== -1) {
                     draft[index].loading = false;
                 }
-            }));
+            });
             toast({
                 title: '上传失败',
                 description: '请重试',
@@ -123,9 +120,9 @@ export const useFileUpload = (defaultUrls?: string[]) => {
     };
 
     const removeFile = (index: number) => {
-        setFiles((prevFiles) => produce(prevFiles, draft => {
+        setFiles(draft => {
             draft.splice(index, 1);
-        }));
+        });
     };
 
     const isUploading = files.some(file => file.loading) && files.length > 0;

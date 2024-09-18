@@ -4,16 +4,17 @@ interface ItemFields {
     type: string;
     link?: string;
   }[];
-  images?: {
-    file_token: string;
-    name: string;
-    size: number;
-    type: string;
-    url?: string;
-  }[],
+  images?: ImageType[],
   tags: string[];
   "created_time"?: number;
   "last_edited_time"?: number;
+}
+ interface ImageType  {
+  file_token: string;
+  name: string;
+  size: number;
+  type: string;
+  url?: string;
 }
 
 export interface newMemo {
@@ -54,4 +55,4 @@ interface Filter {
   }>;
 };
 
-export type { Bitable, Memo, ItemFields, Filter };
+export type { Bitable, Memo, ItemFields, Filter, ImageType };

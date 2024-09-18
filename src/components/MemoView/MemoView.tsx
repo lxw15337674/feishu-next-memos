@@ -67,14 +67,12 @@ const MemoView = ({
       return parseContent(item)
     })
   }, [memoContentText])
-  console.log(images)
-
   if (isEdited) {
     return (
       <div className='mb-2'>
         <Editor onSubmit={(text, fileTokens) => updateRecord(id, text, fileTokens)} defaultValue={memoContentText.join('\n')}
-          defaultUrls={images.map(item => urlMap.get(item.file_token)!)}
-          onCancel={() => setIsEdited(false)}
+          images={images.map(item => ({...item, url:urlMap.get(item.file_token)!}))}
+        onCancel={() => setIsEdited(false)}
         />
       </div>
     );
