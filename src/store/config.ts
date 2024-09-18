@@ -44,8 +44,8 @@ const useConfigStore = create<SettingStore>()(
         persist(immer<SettingStore>(
             (set, get) => ({
                 config: defaultConfig,
-                hasAccessCodePermission: false,
-                hasEditCodePermission: false,
+                hasAccessCodePermission: process.env.EDIT_CODE===undefined,
+                hasEditCodePermission: process.env.EDIT_CODE===undefined,
                 resetCodeConfig: () => {
                     set((state) => {
                         state.config.codeConfig = { ...defaultConfig.codeConfig }
