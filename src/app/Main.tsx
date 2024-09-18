@@ -2,7 +2,7 @@
 import MemoView from '@/components/MemoView/MemoView';
 import useMemoStore from '@/store/memo';
 import useTagStore from '@/store/tag';
-import { useFavicon, useMemoizedFn, useMount, useTitle } from 'ahooks';
+import { useFavicon, useMount, useTitle } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
