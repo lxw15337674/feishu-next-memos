@@ -1,19 +1,7 @@
 import { create } from 'zustand';
-import computed from 'zustand-middleware-computed';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import { merge } from 'lodash-es';
 import { immer } from 'zustand/middleware/immer';
 import { validateAccessCode, validateEditCode } from '../api/validActions';
-// interface Config {
-//     // memo正文是否显示标签
-//     isShowTags: boolean;
-//     // 分享卡片默认是否显示标签
-//     isShowTagsInShareCard: boolean;
-//     // 访问密码
-//     accessCode: string;
-//     // 编辑密码
-//     editCode: string;
-// }
 interface CodeConfig {
     accessCode: string;
     editCode: string;
@@ -35,6 +23,7 @@ interface SettingStore {
     setConfig: (callback: (config: Config) => void) => void;
     setAccessCodePermission: (accessCode: string) => Promise<boolean>;
     setEditCodePermission: (editCode: string) => Promise<boolean>;
+    validateAccessCode: () => Promise<boolean>;
     hasAccessCodePermission: boolean;
     hasEditCodePermission: boolean;
 }
@@ -58,29 +47,36 @@ const useConfigStore = create<SettingStore>()(
                 hasAccessCodePermission: false,
                 hasEditCodePermission: false,
                 resetCodeConfig: () => {
-                    set((state)=>{
+                    set((state) => {
                         state.config.codeConfig = { ...defaultConfig.codeConfig }
                     })
                 },
                 resetAllConfig: () => {
-                    set((state)=>{
+                    set((state) => {
                         state.config = { ...defaultConfig }
                     })
                 },
                 resetGeneralConfig: () => {
-                    set((state)=>{
+                    set((state) => {
                         state.config.generalConfig = { ...defaultConfig.generalConfig }
                     })
                 },
                 setConfig: (callback) => {
-                    set(state=>{
+                    set(state => {
                         callback(state.config)
                     })
+                },
+                validateAccessCode: async () => {
+                    const hasAccessCodePermission = await validateAccessCode(get().config.codeConfig.accessCode)
+                    set((state) => {
+                        state.hasAccessCodePermission = hasAccessCodePermission
+                    })
+                    return hasAccessCodePermission
                 },
                 setAccessCodePermission: async (code) => {
                     const hasAccessCodePermission = await validateAccessCode(code)
                     if (hasAccessCodePermission) {
-                        set((state)=>{
+                        set((state) => {
                             state.config.codeConfig.accessCode = code
                             state.hasAccessCodePermission = true
                         })
@@ -90,7 +86,7 @@ const useConfigStore = create<SettingStore>()(
                 setEditCodePermission: async (code) => {
                     const hasEditCodePermission = await validateEditCode(code)
                     if (hasEditCodePermission) {
-                        set((state)=>{
+                        set((state) => {
                             state.config.codeConfig.editCode = code
                             state.hasEditCodePermission = true
                         })
@@ -101,7 +97,9 @@ const useConfigStore = create<SettingStore>()(
             {
                 name: 'configStore',
                 storage: createJSONStorage(() => localStorage),
-                partialize: state => ({ config: state.config }),
+                partialize: state => {
+                    return { config: state.config }
+                }
             },
         ),
         {

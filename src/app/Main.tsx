@@ -2,7 +2,7 @@
 import MemoView from '@/components/MemoView/MemoView';
 import useMemoStore from '@/store/memo';
 import useTagStore from '@/store/tag';
-import { useFavicon, useMount, useTitle } from 'ahooks';
+import { useFavicon, useMemoizedFn, useMount, useTitle } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
@@ -16,16 +16,14 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
     const { fetchTags } = useTagStore();
     const { setAllMemos } = useCountStore()
-    const { setAccessCodePermission, config, setEditCodePermission } = useConfigStore();
+    const { validateAccessCode } = useConfigStore();
     const router = useRouter();
     useMount(() => {
-        setAccessCodePermission(config.codeConfig.accessCode).then((hasAccessCodePermission) => {
+        validateAccessCode().then((hasAccessCodePermission) => {
             if (!hasAccessCodePermission) {
                 router.push('/login')
-                return
             }
         });
-        setEditCodePermission(config.codeConfig.editCode);
         fetchInitData();
         fetchTags();
         setAllMemos(allMemos);

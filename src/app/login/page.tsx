@@ -16,12 +16,12 @@ import { useMount } from "ahooks"
 import PasswordInput from "@/components/PasswordInput"
 
 export default function Login() {
-    const { setAccessCodePermission } = useConfigStore();
+    const { setAccessCodePermission, validateAccessCode } = useConfigStore();
     const [password, setPassword] = useState('')
     const { toast } = useToast();
     const router = useRouter()
     useMount(async () => {
-        setAccessCodePermission(password).then((hasAccessCodePermission) => {
+        validateAccessCode().then((hasAccessCodePermission) => {
             if (hasAccessCodePermission) {
                 router.push('/')
                 return
