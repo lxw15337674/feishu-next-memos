@@ -76,8 +76,10 @@ export const getAllMemosActions = unstable_cache(async () => {
     let page_token: string | undefined = undefined;
     do {
         const data = await getMemosDataActions({ page_token });
-        allMemos.push(...data.items);
-        page_token = data.page_token;
+        allMemos.push(...data?.items ?? []);
+        if (data?.page_token){
+            page_token = data?.page_token;
+        }
     } while (page_token);
     console.log("所有数据获取成功");
     return allMemos;
