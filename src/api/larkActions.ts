@@ -26,7 +26,7 @@ export const getRecordsActions = async (config: {
         desc: boolean;
     }[]
 }) => {
-    const { page_token = undefined, page_size = 20, filter } = config;
+    const { page_token = undefined, page_size = 200, filter } = config;
     try {
         const { data } = await client.bitable.appTableRecord.search({
             params: {
@@ -45,8 +45,6 @@ export const getRecordsActions = async (config: {
                 table_id: TABLE_ID,
             },
         });
-        console.log("memos数据获取成功", data);
-        if (!data) return
         return data as unknown as Bitable;
     } catch (error) {
         console.error("数据获取失败:", error);
@@ -60,33 +58,40 @@ interface GetMemosDataParams {
     filter?: Filter;
 }
 export const getMemosDataActions = async ({ page_token, filter }: GetMemosDataParams = {}) => {
-    return await getRecordsActions({
-        page_token,
-        sort: [{
-            'field_name': "created_time",
-            "desc": true
-        }],
-        filter
-    });
+    try {
+        const data = await getRecordsActions({
+            page_token,
+            sort: [{
+                'field_name': "created_time",
+                "desc": true
+            }],
+            page_size: 20,
+            filter
+        })
+        return data!
+    } catch (error) {
+        console.error("memos获取失败:", error);
+        throw error;
+    }
 };
 
 // 一次性获取所有笔记
-export const getAllMemosActions = unstable_cache(async () => {
-    const allMemos: Memo[] = [];
-    let page_token: string | undefined = undefined;
-    do {
-        const data = await getMemosDataActions({ page_token });
-        allMemos.push(...data?.items ?? []);
-        if (data?.page_token){
-            page_token = data?.page_token;
-        }
-    } while (page_token);
-    console.log("所有数据获取成功");
-    return allMemos;
-}, [], {
-    tags: ['memos'],
-    revalidate: 24 * 60 * 60
-})
+// export const getAllMemosActions = unstable_cache(async () => {
+//     const allMemos: Memo[] = [];
+//     let page_token: string | undefined = undefined;
+//     do {
+//         const data = await getMemosDataActions({ page_token });
+//         allMemos.push(...data?.items ?? []);
+//         if (data?.page_token) {
+//             page_token = data?.page_token;
+//         }
+//     } while (page_token);
+//     console.log("所有数据获取成功");
+//     return allMemos;
+// }, [], {
+//     tags: ['memos'],
+//     revalidate: 24 * 60 * 60
+// })
 
 export const getAllFields = unstable_cache(async () => {
     try {
@@ -111,7 +116,7 @@ export const getAllFields = unstable_cache(async () => {
 export const createNewMemo = async (content: string, fileTokens?: string[]) => {
     try {
         const fields = splitMode(content, fileTokens) as Record<string, any>;
-        const { data } = await client.bitable.appTableRecord.create({
+        await client.bitable.appTableRecord.create({
             path: {
                 app_token: APP_TOKEN,
                 table_id: TABLE_ID,

@@ -51,7 +51,6 @@ const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
     const content = editor.value ?? '';
     if (content.trim().length === 0) return;
     setLoading(true);
-    console.log('files', files)
     await onSubmit?.(content, files?.map(item => item.file_token!)).finally(() => {
       setLoading(false);
     })

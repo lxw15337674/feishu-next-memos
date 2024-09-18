@@ -68,7 +68,6 @@ export const useFileUpload = (defaultImages: ImageType[] = []) => {
         try {
             const file_token = await uploadImageAction(formData);
             setFiles(draft => {
-                console.log(draft);
                 const index = draft.findIndex(f => f.source === source);
                 if (index !== -1) {
                     draft[index].loading = false;

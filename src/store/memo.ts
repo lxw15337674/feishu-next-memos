@@ -72,7 +72,7 @@ const useMemoStore = create<MemoStore>()(
               filter: useFilterStore.getState().filterParams,
             });
             set((state) => {
-              state.databases = databases;
+              state.databases = databases
               state.memos.push(...databases.items);
             });
           }

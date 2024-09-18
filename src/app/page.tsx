@@ -4,24 +4,26 @@ import NewMemoEditor from './NewMemoEditor';
 import ShareCardDialog from '@/components/ShareCard/ShareCardDialog';
 import LeftSide from '@/components/LeftSide';
 import MemoFilter from '@/components/MemoFilter';
-import {  getMemosDataActions } from '../api/larkActions';
 import { unstable_cache } from 'next/cache';
 import { Memo } from '../api/type';
+import { getRecordsActions } from '../api/larkActions';
 
 const getCachedAllMemos = unstable_cache(
   async () => {
     const allMemos: Memo[] = [];
     let page_token: string | undefined = undefined;
     do {
-      const data = await getMemosDataActions({ page_token });
-      allMemos.push(...data.items);
-      page_token = data.page_token;
+      const data = await getRecordsActions({ page_token });
+      allMemos.push(...data?.items ?? []);
+      page_token = data?.page_token;
+      // 添加 0.2 秒延迟
+      await new Promise(resolve => setTimeout(resolve, 200)); 
     } while (page_token);
     console.log("所有数据获取成功");
     return allMemos;
   },
   ['memos'],
-  { revalidate: 3600, }
+  { revalidate: 24 * 60 * 60 }
 )
 
 export default async function Home() {
