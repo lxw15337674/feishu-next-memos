@@ -45,7 +45,8 @@ export const getRecordsActions = async (config: {
                 table_id: TABLE_ID,
             },
         });
-        console.log("数据获取成功", data);
+        console.log("memos数据获取成功", data);
+        if (!data) return
         return data as unknown as Bitable;
     } catch (error) {
         console.error("数据获取失败:", error);
