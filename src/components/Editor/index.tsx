@@ -16,7 +16,7 @@ interface Props {
   onSubmit: (text: string, file_token?: string[]) => Promise<any>;
   onCancel?: () => void;
   defaultValue?: string;
-  images: ImageType[]
+  images?: ImageType[]
 }
 export interface ReplaceTextFunction {
   (text: string, start: number, end: number, cursorOffset?: number): void
@@ -52,7 +52,6 @@ const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
     if (content.trim().length === 0) return;
     setLoading(true);
     console.log('files', files)
-    debugger
     await onSubmit?.(content, files?.map(item => item.file_token!)).finally(() => {
       setLoading(false);
     })

@@ -12,6 +12,7 @@ interface MemoStore {
   fetchPagedData: () => Promise<void>;
   removeMemo: (record_id: string) => number;
   updateMemo: (record_id: string) => void;
+  fetchFirstData: () => Promise<void>;
 }
 
 const useMemoStore = create<MemoStore>()(
@@ -41,6 +42,14 @@ const useMemoStore = create<MemoStore>()(
               }
             });
           });
+        },
+        fetchFirstData: async () => {
+          const databases = await getMemosDataActions();
+          if (databases?.items) {
+            set((state) => {
+              state.memos.unshift(databases.items[0]);
+            })
+          }
         },
         // 获取初始化数据
         fetchInitData: async () => {

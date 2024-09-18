@@ -43,7 +43,7 @@ const MemoView = ({
   }, [created_time])
 
   const memoContentText = useMemo(() => {
-    return content?.map(
+    return content?.map?.(
       (item) => item.text,
     ) as string[]
   }, [

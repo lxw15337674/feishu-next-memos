@@ -4,7 +4,7 @@ import NewMemoEditor from './NewMemoEditor';
 import ShareCardDialog from '@/components/ShareCard/ShareCardDialog';
 import LeftSide from '@/components/LeftSide';
 import MemoFilter from '@/components/MemoFilter';
-import { getAllMemosActions, getMemosDataActions } from '../api/larkActions';
+import {  getMemosDataActions } from '../api/larkActions';
 import { unstable_cache } from 'next/cache';
 import { Memo } from '../api/type';
 

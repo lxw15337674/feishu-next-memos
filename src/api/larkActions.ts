@@ -45,7 +45,7 @@ export const getRecordsActions = async (config: {
                 table_id: TABLE_ID,
             },
         });
-        console.log("数据获取成功",data);
+        console.log("数据获取成功", data);
         return data as unknown as Bitable;
     } catch (error) {
         console.error("数据获取失败:", error);
@@ -80,9 +80,12 @@ export const getAllMemosActions = unstable_cache(async () => {
     } while (page_token);
     console.log("所有数据获取成功");
     return allMemos;
+}, [], {
+    tags: ['memos'],
+    revalidate: 24 * 60 * 60
 })
 
-export const getAllFields = async () => {
+export const getAllFields = unstable_cache(async () => {
     try {
         const { data } = await client.bitable.appTableField.list({
             path: {
@@ -96,13 +99,16 @@ export const getAllFields = async () => {
         console.error("标签获取失败:", error);
         throw error;
     }
-};
+}, [], {
+    tags: ['fields'],
+    revalidate: 24 * 60 * 60
+})
 
 
 export const createNewMemo = async (content: string, fileTokens?: string[]) => {
     try {
         const fields = splitMode(content, fileTokens) as Record<string, any>;
-        await client.bitable.appTableRecord.create({
+        const { data } = await client.bitable.appTableRecord.create({
             path: {
                 app_token: APP_TOKEN,
                 table_id: TABLE_ID,
@@ -206,7 +212,7 @@ interface ImageData {
     tmp_download_url: string;
 }
 
-export const getImageUrlAction = async (file_tokens: string[]) => {
+export const getImageUrlAction = unstable_cache(async (file_tokens: string[]) => {
     // 处理多个 file_token，将它们拼接成 "file_tokens={token1}&file_tokens={token2}" 的形式
     const queryString = file_tokens.map(token => `file_tokens=${token}`).join('&');
 
@@ -216,4 +222,7 @@ export const getImageUrlAction = async (file_tokens: string[]) => {
     });
     console.log("图片获取成功");
     return data?.tmp_download_urls as ImageData[]
-};
+}, [], {
+    tags: ['images'],
+    revalidate: 24 * 60 * 60
+})
