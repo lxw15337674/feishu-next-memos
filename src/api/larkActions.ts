@@ -93,7 +93,7 @@ export const getMemosDataActions = async ({ page_token, filter }: GetMemosDataPa
 //     revalidate: 24 * 60 * 60
 // })
 
-export const getAllFields = unstable_cache(async () => {
+export const getAllFields = async () => {
     try {
         const { data } = await client.bitable.appTableField.list({
             path: {
@@ -107,10 +107,7 @@ export const getAllFields = unstable_cache(async () => {
         console.error("标签获取失败:", error);
         throw error;
     }
-}, [], {
-    tags: ['fields'],
-    revalidate: 24 * 60 * 60
-})
+}
 
 
 export const createNewMemo = async (content: string, fileTokens?: string[]) => {
@@ -232,5 +229,5 @@ export const getImageUrlAction = unstable_cache(async (file_tokens: string[]) =>
     return data?.tmp_download_urls as ImageData[]
 }, [], {
     tags: ['images'],
-    revalidate: 24 * 60 * 60
+    revalidate: 12 * 60 * 60
 })

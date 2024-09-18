@@ -23,7 +23,7 @@ const getCachedAllMemos = unstable_cache(
     return allMemos;
   },
   ['memos'],
-  { revalidate: 24 * 60 * 60 }
+  { revalidate: 60 * 60 }
 )
 
 export default async function Home() {
