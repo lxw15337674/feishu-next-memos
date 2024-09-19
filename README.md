@@ -1,5 +1,5 @@
 # **💭Fmemos** 
-**Quick notes, powered by Notion**
+**Quick notes, powered by lark**
 ## Preview
 
 
@@ -9,12 +9,6 @@
 - **Multi-dimensional Statistics**
 - **Generate Multiple Share Card**
 - **Open-Source Code**
-
-
-## Deploy your own
-
-
-
 
    
 
