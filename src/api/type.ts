@@ -10,7 +10,7 @@ interface ItemFields {
   "last_edited_time"?: number;
   link?: LinkType
 }
-export interface ImageType {
+interface ImageType {
   file_token: string;
   name: string;
   size: number;
