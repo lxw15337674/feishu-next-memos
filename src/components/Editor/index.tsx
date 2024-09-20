@@ -81,16 +81,16 @@ const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
   })
   const isLoading = loading || isUploading
   return (
-    <div className="relative">
+    <div className="relative w-auto overflow-x-hidden">
       <Textarea
-        className="w-full h-full bg-card text-card-foreground"
+        className="h-full bg-card text-card-foreground"
         placeholder="此刻的想法..."
         minRows={3}
         autoFocus
         defaultValue={defaultValue}
         slotProps={{ textarea: { ref: setEditorRef } }}
         endDecorator={
-          <div className='w-full max-w-full'>
+          <div className='w-full'>
             <PhotoProvider
               brokenElement={<div className="w-[164px] h-[164px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
             >
