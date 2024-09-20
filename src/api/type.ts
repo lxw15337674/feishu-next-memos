@@ -8,8 +8,9 @@ interface ItemFields {
   tags: string[];
   "created_time"?: number;
   "last_edited_time"?: number;
+  link?: LinkType
 }
- interface ImageType  {
+export interface ImageType {
   file_token: string;
   name: string;
   size: number;
@@ -17,6 +18,10 @@ interface ItemFields {
   url?: string;
 }
 
+export interface LinkType {
+  link: string;
+  text?: string;
+}
 export interface newMemo {
   content: string;
   images?: {

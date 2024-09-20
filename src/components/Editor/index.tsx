@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, {  useState } from 'react';
 import { Textarea } from '@mui/joy';
 import Icon from '../Icon';
 import TagSuggestions from './TagSuggestions';
@@ -10,23 +10,30 @@ import { useDebounceFn, useEventListener, useKeyPress } from 'ahooks';
 import { useFileUpload } from './useFileUpload';
 import ImageViewer from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
-import { ImageType } from '../../api/type';
+import { ImageType, LinkType } from '../../api/type';
+import LinkAction from './LinkAction.';
+import { NewMemo } from '../../utils/parser';
 
 interface Props {
-  onSubmit: (text: string, file_token?: string[]) => Promise<any>;
+  onSubmit: (memo: NewMemo) => Promise<any>;
   onCancel?: () => void;
   defaultValue?: string;
-  images?: ImageType[]
+  defaultImages?: ImageType[];
+  defaultLink?: LinkType;
 }
 export interface ReplaceTextFunction {
   (text: string, start: number, end: number, cursorOffset?: number): void
 }
 
-const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
+const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink = {
+  link: '',
+  text: ''
+} }: Props) => {
   const { fetchTags } = useTagStore();
   const [loading, setLoading] = React.useState(false);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
-  const { files, uploadFile, removeFile, isUploading, reset, pushFile } = useFileUpload(images)
+  const { files, uploadFile, removeFile, isUploading, reset, pushFile } = useFileUpload(defaultImages)
+  const [link, setLink] = useState<LinkType>(defaultLink)
   const { run: replaceText } = useDebounceFn<ReplaceTextFunction>((text, start, end, offset = 0) => {
     const editor = editorRef;
     if (editor) {
@@ -51,12 +58,21 @@ const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
     const content = editor.value ?? '';
     if (content.trim().length === 0) return;
     setLoading(true);
-    await onSubmit?.(content, files?.map(item => item.file_token!)).finally(() => {
-      setLoading(false);
-    })
+    await onSubmit?.(
+      {
+        content,
+        fileTokens: files?.map(item => item.file_token!),
+        link
+      }).finally(() => {
+        setLoading(false);
+      })
     fetchTags()
     editor!.value = '';
     reset()
+    setLink({
+      link: '',
+      text: ''
+    })
   };
   useKeyPress('ctrl.enter', (e) => {
     // 判断是否focus
@@ -130,7 +146,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
               <Button
                 variant="ghost"
                 size="icon"
-                title='插入图片，最大9张，单张最大5MB'
+                title='插入图片，最大9张，单张最大20MB'
                 onClick={() => {
                   if (!editorRef) {
                     return
@@ -141,6 +157,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, images }: Props) => {
               >
                 <Icon.Paperclip size={20} />
               </Button>
+              <LinkAction link={link} setLink={setLink} />
               <div className="flex items-center ml-auto">
                 {onCancel && <Button
                   disabled={loading}

@@ -20,7 +20,8 @@ const MemoView = ({
   last_edited_time,
   created_time,
   id,
-  images = []
+  images = [],
+  link
 }: ItemFields & { id: string }) => {
   const [isEdited, setIsEdited] = useState(false);
   const [urlMap, urlMapActions] = useMap<string, string>()
@@ -70,9 +71,10 @@ const MemoView = ({
   if (isEdited) {
     return (
       <div className='mb-2'>
-        <Editor onSubmit={(text, fileTokens) => updateRecord(id, text, fileTokens)} defaultValue={memoContentText.join('\n')}
-          images={images.map(item => ({...item, url:urlMap.get(item.file_token)!}))}
-        onCancel={() => setIsEdited(false)}
+        <Editor onSubmit={(memo) => updateRecord(id, memo)} defaultValue={memoContentText.join('\n')}
+          defaultImages={images.map(item => ({ ...item, url: urlMap.get(item.file_token)! }))}
+          onCancel={() => setIsEdited(false)}
+          defaultLink={link}
         />
       </div>
     );
@@ -133,7 +135,15 @@ const MemoView = ({
         </div>
       }
       {
-        tags.length > 0 && <div className='mb-2'>
+        link?.link && <div className='mb-2'>
+          <a href={link.link} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+            {link.text || link.link}
+          </a>
+        </div>
+
+      }
+      {
+        tags.length > 0 && <div className='mb-2 '>
           {tags?.map((label) => (
             <Tag
               className="bg-blue-100 text-blue-800 font-medium me-0.5 px-1 py-0.5  rounded dark:bg-blue-900 dark:text-blue-300 "
@@ -145,7 +155,6 @@ const MemoView = ({
           ))}
         </div>
       }
-
     </Card>
   );
 };
