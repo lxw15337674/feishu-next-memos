@@ -10,6 +10,7 @@ const APP_SECRET = process.env.APP_SECRET as string
 const APP_TOKEN = process.env.APP_TOKEN as string
 const TABLE_ID = process.env.TABLE_ID as string
 
+console.log(APP_ID, APP_SECRET, APP_TOKEN, TABLE_ID);
 const client = new lark.Client({
     appId: APP_ID,
     appSecret: APP_SECRET,
@@ -224,14 +225,19 @@ interface ImageData {
 
 export const getImageUrlAction = unstable_cache(async (file_tokens: string[]) => {
     // 处理多个 file_token，将它们拼接成 "file_tokens={token1}&file_tokens={token2}" 的形式
-    const queryString = file_tokens.map(token => `file_tokens=${token}`).join('&');
-
-    const { data } = await client.request({
-        method: 'get',
-        url: `https://open.feishu.cn/open-apis/drive/v1/medias/batch_get_tmp_download_url?${queryString}`,
-    });
-    console.log("图片获取成功");
-    return data?.tmp_download_urls as ImageData[]
+    try {
+        console.log(file_tokens); 
+        const queryString = file_tokens.map(token => `file_tokens=${token}`).join('&');
+        const { data } = await client.request({
+            method: 'get',
+            url: `https://open.feishu.cn/open-apis/drive/v1/medias/batch_get_tmp_download_url?${queryString}`,
+        });
+        console.log("图片获取成功");
+        return data?.tmp_download_urls as ImageData[]
+    } catch (error) {
+        console.error("图片获取失败:", error);
+        throw error;
+    }
 }, [], {
     tags: ['images'],
     revalidate: 12 * 60 * 60
