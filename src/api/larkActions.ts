@@ -114,7 +114,7 @@ export const getAllFields = async () => {
 export const createNewMemo = async (newMemo: NewMemo) => {
     try {
         const fields = parseFields(newMemo) as Record<string, any>;
-        await client.bitable.appTableRecord.create({
+        const { data } = await client.bitable.appTableRecord.create({
             path: {
                 app_token: APP_TOKEN,
                 table_id: TABLE_ID,
@@ -123,7 +123,11 @@ export const createNewMemo = async (newMemo: NewMemo) => {
                 fields,
             },
         });
-        console.log("添加成功");
+        if (data) {
+            console.log("添加成功");
+        } else {
+            throw new Error("添加失败");
+        }
     } catch (error) {
         console.error("添加失败:", error);
         throw error;
