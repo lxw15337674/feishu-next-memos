@@ -6,13 +6,9 @@ interface CodeConfig {
     accessCode: string;
     editCode: string;
 }
-interface GeneralConfig {
-    isShowTags: boolean;
-    isShowTagsInShareCard: boolean;
-}
+
 interface Config {
     codeConfig: CodeConfig;
-    generalConfig: GeneralConfig;
 }
 interface SettingStore {
     config: Config;
@@ -33,10 +29,7 @@ const defaultConfig: Config = {
         accessCode: '',
         editCode: '',
     },
-    generalConfig: {
-        isShowTags: true,
-        isShowTagsInShareCard: false,
-    }
+   
 };
 
 const useConfigStore = create<SettingStore>()(

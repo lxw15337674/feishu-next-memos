@@ -88,16 +88,28 @@ export interface NewMemo {
 export function parseFields(newMemo: NewMemo): Record<string, any> {
   const { content, fileTokens, link } = newMemo;
 
-  const parsedContent = content.split('\n').map(parseContent);
-  const images = fileTokens?.map(file_token => ({ file_token })) ?? [];
+  const tags: string[] = [];
+  const textLines: string[] = [];
 
-  const extractedTags = parsedContent.flatMap(items => items.filter(item => item.type === 'tag').map(item => item.text.slice(1)));
-  const text = parsedContent.flatMap(items => items.filter(item => item.type !== 'tag').map(item => item.text)).join('\n');
+  content.split('\n').forEach(line => {
+    const parsedLine = parseContent(line);
+    const lineText: string[] = [];
+    
+    parsedLine.forEach(item => {
+      if (item.type === 'tag') {
+        tags.push(item.text.slice(1));
+      } else {
+        lineText.push(item.text);
+      }
+    });
+    
+    textLines.push(lineText.join(''));
+  });
 
   return {
-    content: text,
-    tags: extractedTags,
-    images,
+    content: textLines.join('\n'),
+    tags,
+    images: fileTokens?.map(file_token => ({ file_token })) ?? [],
     link: link?.link ? link : undefined
   };
 }

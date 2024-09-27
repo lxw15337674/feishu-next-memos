@@ -70,17 +70,16 @@ const imageDownload = async (card: HTMLDivElement) => {
 const ShareCardDialog = () => {
     const { text, open, setOpen } = useShareCardStore();
     const { config } = useConfigStore()
-    const [isShowTags, { toggle: toggleShowTags }] = useBoolean(config.generalConfig.isShowTagsInShareCard)
     const { data: url, run, loading } = useRequest(getRandomImage, {
         manual: false
     })
     const content = useMemo(() => {
         return text.map((content) => {
-            return content.filter((item) => item.type === 'text' || isShowTags && item.type === 'tag')
+            return content.filter((item) => item.type === 'text' ||   item.type === 'tag')
         }).map((item) => {
             return item.map((i) => i.text).join('')
         });
-    }, [text, isShowTags])
+    }, [text])
     const refs = useRef<HTMLDivElement[]>([]);
 
     return <>
@@ -115,19 +114,6 @@ const ShareCardDialog = () => {
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="space-y-2">
-                    <div className="items-center flex space-x-2 cursor-pointer mt-2 mr-4">
-                        <Checkbox id="terms1" checked={isShowTags}
-                            onCheckedChange={toggleShowTags}
-                        />
-                        <div className="grid gap-1.5 leading-none ">
-                            <label
-                                htmlFor="terms1"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                保留标签
-                            </label>
-                        </div>
-                    </div>
                     <Button variant="outline" onClick={() => run()} disabled={loading}>
                         {
                             loading && <Icon.Loader2 size={20} className="animate-spin mr-1" />
