@@ -55,10 +55,10 @@ const MemoView = ({
     const fetchImageUrls = async () => {
       for (let i = 0; i < images.length; i += maxBatchSize) {
         const batchImages = images.slice(i, i + maxBatchSize);
-        // const data = await getImageUrlAction(batchImages.map(item => item.file_token));
-        // data?.forEach((item) => {
-        //   urlMapActions.set(item.file_token, item.tmp_download_url)
-        // })
+        const data = await getImageUrlAction(batchImages.map(item => item.file_token));
+        data?.forEach((item) => {
+          urlMapActions.set(item.file_token, item.tmp_download_url)
+        })
       }
     };
     fetchImageUrls();
