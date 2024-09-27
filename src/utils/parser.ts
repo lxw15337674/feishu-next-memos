@@ -88,19 +88,16 @@ export interface NewMemo {
 export function parseFields(newMemo: NewMemo): Record<string, any> {
   const { content, fileTokens, link } = newMemo;
 
-  const parsedContent = content.split('\n').flatMap(parseContent);
-
-  const tags = parsedContent
-    .filter(item => item.type === 'tag')
-    .map(item => item.text.slice(1));
-
-  const text = parsedContent.map(item => item.text).join('');
-
+  const parsedContent = content.split('\n').map(parseContent);
+  const tags: string[] = [];
   const images = fileTokens?.map(file_token => ({ file_token })) ?? [];
+
+  const extractedTags = parsedContent.flatMap(items => items.filter(item => item.type === 'tag').map(item => item.text.slice(1)));
+  const text = parsedContent.flatMap(items => items.filter(item => item.type !== 'tag').map(item => item.text)).join('\n');
 
   return {
     content: text,
-    tags,
+    tags: extractedTags,
     images,
     link: link?.link ? link : undefined
   };
