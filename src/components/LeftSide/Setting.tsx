@@ -24,7 +24,7 @@ import {  parseMastodonData } from '../../utils/importData';
 import useImportMemos from './useImportMemos';
 import Icon from '../Icon';
 export function Setting() {
-    const { config, setConfig, resetGeneralConfig, setEditCodePermission } = useConfigStore()
+    const { config,  resetCodeConfig, setEditCodePermission } = useConfigStore()
     const { toast } = useToast()
     const [editCode, setEditCode] = useState(config.codeConfig.editCode)
     const { run: debounceSetEditCodePermission } = useThrottleFn(async () => {
@@ -136,7 +136,7 @@ export function Setting() {
                         校验编辑密码
                     </Button>
                     <Button type="submit" className="w-full" variant="destructive" onClick={() => {
-                        resetGeneralConfig()
+                        resetCodeConfig()
                         router.push('/login')
                     }}>
                         重置密码

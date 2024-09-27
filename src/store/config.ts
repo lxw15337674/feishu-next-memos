@@ -10,10 +10,10 @@ interface CodeConfig {
 interface Config {
     codeConfig: CodeConfig;
 }
+
 interface SettingStore {
     config: Config;
     // 重置通用配置
-    resetGeneralConfig: () => void;
     resetCodeConfig: () => void;
     resetAllConfig: () => void;
     setConfig: (callback: (config: Config) => void) => void;
@@ -29,7 +29,6 @@ const defaultConfig: Config = {
         accessCode: '',
         editCode: '',
     },
-   
 };
 
 const useConfigStore = create<SettingStore>()(
@@ -47,11 +46,6 @@ const useConfigStore = create<SettingStore>()(
                 resetAllConfig: () => {
                     set((state) => {
                         state.config = { ...defaultConfig }
-                    })
-                },
-                resetGeneralConfig: () => {
-                    set((state) => {
-                        state.config.generalConfig = { ...defaultConfig.generalConfig }
                     })
                 },
                 setConfig: (callback) => {
