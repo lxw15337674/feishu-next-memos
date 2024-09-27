@@ -89,7 +89,6 @@ export function parseFields(newMemo: NewMemo): Record<string, any> {
   const { content, fileTokens, link } = newMemo;
 
   const parsedContent = content.split('\n').map(parseContent);
-  const tags: string[] = [];
   const images = fileTokens?.map(file_token => ({ file_token })) ?? [];
 
   const extractedTags = parsedContent.flatMap(items => items.filter(item => item.type === 'tag').map(item => item.text.slice(1)));

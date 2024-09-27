@@ -95,7 +95,7 @@ const MemoView = ({
       <div className="font-medium mb-2">
         {parsedContent?.map((item, index) => (
           <p key={index} className="whitespace-pre-wrap break-words w-full leading-6 text-sm">
-            {
+            { 
               item.map((item, index) => {
                 if (item.type === 'tag') {
                   if (!config.generalConfig.isShowTags) {
