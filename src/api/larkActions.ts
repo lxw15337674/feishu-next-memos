@@ -194,7 +194,7 @@ export const getRandomImage = async () => {
     const res = await unsplash.photos.getRandom({
         query: 'wallpapers',
         orientation: 'landscape',
-    }).catch((e) => {
+    }).catch((e: any) => {
         console.error(e);
     });
     return (res?.response as Random).urls?.regular;
@@ -222,7 +222,7 @@ interface ImageData {
     tmp_download_url: string;
 }
 
-export const getImageUrlAction = async (file_tokens: string[]) => {
+export const getImageUrlAction = unstable_cache(async (file_tokens: string[]) => {
     try {
         const { data } = await client.drive.media.batchGetTmpDownloadUrl({
             params: {
@@ -234,4 +234,7 @@ export const getImageUrlAction = async (file_tokens: string[]) => {
     } catch (e) {
         console.error(e);
     }
-}
+}, [], {
+    tags: ['images'],
+    revalidate: 12 * 60 * 60
+})
