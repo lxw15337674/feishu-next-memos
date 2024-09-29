@@ -24,7 +24,7 @@ import {  parseMastodonData } from '../../utils/importData';
 import useImportMemos from './useImportMemos';
 import Icon from '../Icon';
 export function Setting() {
-    const { config, setConfig, resetGeneralConfig, setEditCodePermission } = useConfigStore()
+    const { config,  resetCodeConfig, setEditCodePermission } = useConfigStore()
     const { toast } = useToast()
     const [editCode, setEditCode] = useState(config.codeConfig.editCode)
     const { run: debounceSetEditCodePermission } = useThrottleFn(async () => {
@@ -105,50 +105,8 @@ export function Setting() {
             <DialogContent className="sm:max-w-68 max-h-[80vh] overflow-auto no-scrollbar" >
                 <DialogHeader>
                     <DialogTitle>设置</DialogTitle>
-                    <DialogDescription>
-                        个性化设置
-                    </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                    <div className="flex items-center justify-between space-x-4">
-                        <Label className="flex flex-col space-y-1">
-                            <span>
-                                显示标签
-                            </span>
-                            <span className="text-xs font-normal leading-snug text-muted-foreground">
-                                是否在笔记正文中显示标签
-                            </span>
-                        </Label>
-                        <Switch checked={
-                            config.generalConfig.isShowTags
-                        } onCheckedChange={(checked) => {
-                            setConfig(config => {
-                                config.generalConfig.isShowTags = checked
-                                return config
-                            })
-                        }} />
-                    </div>
-                    <div className="flex items-center justify-between space-x-4">
-                        <Label className="flex flex-col space-y-1">
-                            <span>
-                                分享卡片显示标签
-                            </span>
-                            <span className="text-xs font-normal leading-snug text-muted-foreground">
-                                分享卡片默认是否显示标签
-                            </span>
-                        </Label>
-                        <Switch checked={
-                            config.generalConfig.isShowTagsInShareCard
-                        } onCheckedChange={(checked) => {
-                            setConfig(config => {
-                                config.generalConfig.isShowTagsInShareCard = checked
-                            })
-                        }} />
-                    </div>
-                    <Button type="reset" className="w-full" variant="destructive" onClick={resetGeneralConfig}>
-                        重置设置
-                    </Button>
-                    <Separator className="my-4" />
                     <div className="space-y-2">
                         <Label className="flex flex-col space-y-1 ">
                             <span>
@@ -178,7 +136,7 @@ export function Setting() {
                         校验编辑密码
                     </Button>
                     <Button type="submit" className="w-full" variant="destructive" onClick={() => {
-                        resetGeneralConfig()
+                        resetCodeConfig()
                         router.push('/login')
                     }}>
                         重置密码

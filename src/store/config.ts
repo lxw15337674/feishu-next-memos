@@ -6,18 +6,14 @@ interface CodeConfig {
     accessCode: string;
     editCode: string;
 }
-interface GeneralConfig {
-    isShowTags: boolean;
-    isShowTagsInShareCard: boolean;
-}
+
 interface Config {
     codeConfig: CodeConfig;
-    generalConfig: GeneralConfig;
 }
+
 interface SettingStore {
     config: Config;
     // 重置通用配置
-    resetGeneralConfig: () => void;
     resetCodeConfig: () => void;
     resetAllConfig: () => void;
     setConfig: (callback: (config: Config) => void) => void;
@@ -33,10 +29,6 @@ const defaultConfig: Config = {
         accessCode: '',
         editCode: '',
     },
-    generalConfig: {
-        isShowTags: true,
-        isShowTagsInShareCard: false,
-    }
 };
 
 const useConfigStore = create<SettingStore>()(
@@ -54,11 +46,6 @@ const useConfigStore = create<SettingStore>()(
                 resetAllConfig: () => {
                     set((state) => {
                         state.config = { ...defaultConfig }
-                    })
-                },
-                resetGeneralConfig: () => {
-                    set((state) => {
-                        state.config.generalConfig = { ...defaultConfig.generalConfig }
                     })
                 },
                 setConfig: (callback) => {

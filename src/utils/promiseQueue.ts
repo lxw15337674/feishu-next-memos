@@ -74,7 +74,6 @@ export class PromiseQueue {
     }
 }
 
-export const randomSleep = (min: number, max: number) => {
-    const sleepTime = Math.floor(Math.random() * (max - min + 1)) + min;
+export const sleep = (sleepTime:number) => {
     return new Promise(resolve => setTimeout(resolve, sleepTime));
 }

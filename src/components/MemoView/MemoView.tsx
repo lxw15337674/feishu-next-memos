@@ -95,12 +95,9 @@ const MemoView = ({
       <div className="font-medium mb-2">
         {parsedContent?.map((item, index) => (
           <p key={index} className="whitespace-pre-wrap break-words w-full leading-6 text-sm">
-            {
+            { 
               item.map((item, index) => {
                 if (item.type === 'tag') {
-                  if (!config.generalConfig.isShowTags) {
-                    return null
-                  }
                   return <Tag
                     className="bg-blue-100 text-blue-800 font-medium mx-[1px] px-1 py-0.5  rounded dark:bg-blue-900 dark:text-blue-300 "
                     text={item.text.slice(1)}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import useTagStore from '@/store/tag';
 import OverflowTip from '../OverflowTip';
 import getCaretCoordinates from 'textarea-caret';
@@ -83,9 +84,22 @@ const TagSuggestions = ({ editorRef, replaceText }: Props) => {
     const [word, index] = getCurrentWord();
     const currentChar = editor.value[editor.selectionEnd];
     const isActive = word.startsWith('#') && currentChar !== '#';
-    const caretCordinates = getCaretCoordinates(editor, index);
-    caretCordinates.left += 20;
-    isActive ? setPosition(caretCordinates) : hide();
+    
+    if (isActive) {
+      const caretCoordinates = getCaretCoordinates(editor, index);
+      const editorRect = editor.getBoundingClientRect();
+      
+      const left = editorRect.left + caretCoordinates.left;
+      const top = editorRect.top + caretCoordinates.top - editor.scrollTop;
+      
+      setPosition({
+        left,
+        top,
+        height: caretCoordinates.height
+      });
+    } else {
+      hide();
+    }
   };
 
   const listenersAreRegisteredRef = useRef(false);
@@ -98,10 +112,31 @@ const TagSuggestions = ({ editorRef, replaceText }: Props) => {
     listenersAreRegisteredRef.current = true;
   };
   useEffect(registerListeners, [!!editor]);
-  if (!isVisibleRef.current || !position) return null;
-  return (
+
+  // New state to store the portal container
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    registerListeners();
+    
+    // Create a div element to serve as the portal container
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    setPortalContainer(container);
+
+    return () => {
+      // Clean up the portal container on unmount
+      if (container && document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
+    };
+  }, [!!editor]);
+
+  if (!isVisibleRef.current || !position || !portalContainer) return null;
+
+  const suggestionsList = (
     <Card
-      className="z-20 p-1 mt-1 -ml-2 absolute max-w-[12rem] gap-px rounded font-mono flex flex-col justify-start items-start overflow-auto shadow "
+      className="z-50 p-1 mt-1 -ml-2 fixed max-w-[12rem] gap-px rounded font-mono flex flex-col justify-start items-start overflow-auto shadow"
       style={{ left: position.left, top: position.top + position.height }}
     >
       {suggestionsRef.current.map((tag, i) => (
@@ -118,6 +153,8 @@ const TagSuggestions = ({ editorRef, replaceText }: Props) => {
       ))}
     </Card>
   );
+
+  return createPortal(suggestionsList, portalContainer);
 };
 
 export default TagSuggestions;
