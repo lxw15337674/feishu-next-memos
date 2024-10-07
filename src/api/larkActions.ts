@@ -223,17 +223,15 @@ interface ImageData {
 }
 
 export const getImageUrlAction = unstable_cache(async (file_tokens: string[]) => {
-    try {
-        const { data } = await client.drive.media.batchGetTmpDownloadUrl({
-            params: {
-                file_tokens
-            }
-        })
-        console.log("图片获取成功");
-        return data?.tmp_download_urls as ImageData[]
-    } catch (e) {
-        console.error(e);
-    }
+    // 处理多个 file_token，将它们拼接成 "file_tokens={token1}&file_tokens={token2}" 的形式
+    const queryString = file_tokens.map(token => `file_tokens=${token}`).join('&');
+
+    const { data } = await client.request({
+        method: 'get',
+        url: `https://open.feishu.cn/open-apis/drive/v1/medias/batch_get_tmp_download_url?${queryString}`,
+    });
+    console.log("图片获取成功");
+    return data?.tmp_download_urls as ImageData[]
 }, [], {
     tags: ['images'],
     revalidate: 12 * 60 * 60
