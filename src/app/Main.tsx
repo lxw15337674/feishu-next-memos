@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
 import useCountStore from '../store/count';
 import { Memo } from '../api/type';
+import SimpleMemoView from '../components/MemoView/SimpleMemoView';
 
 
 export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
@@ -16,7 +17,8 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
     const { fetchTags } = useTagStore();
     const { setAllMemos } = useCountStore()
-    const { validateAccessCode } = useConfigStore();
+    const { validateAccessCode, config } = useConfigStore();
+    const { isSimpleMode } = config.generalConfig;
     const router = useRouter();
     useMount(() => {
         validateAccessCode().then((hasAccessCodePermission) => {
@@ -45,7 +47,9 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
             }
         >
             {memos.map((memo) => (
-                <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
+                isSimpleMode 
+                    ? <SimpleMemoView key={memo.record_id} id={memo.record_id} {...memo.fields} /> 
+                    : <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
             ))}
         </InfiniteScroll>
     );

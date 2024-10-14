@@ -6,14 +6,18 @@ interface CodeConfig {
     accessCode: string;
     editCode: string;
 }
-
+interface GeneralConfig {
+    // 是否简易模式
+    isSimpleMode: boolean;
+}
 interface Config {
     codeConfig: CodeConfig;
+    generalConfig: GeneralConfig;
 }
-
 interface SettingStore {
     config: Config;
     // 重置通用配置
+    resetGeneralConfig: () => void;
     resetCodeConfig: () => void;
     resetAllConfig: () => void;
     setConfig: (callback: (config: Config) => void) => void;
@@ -29,6 +33,9 @@ const defaultConfig: Config = {
         accessCode: '',
         editCode: '',
     },
+    generalConfig: {
+        isSimpleMode: false,
+    }
 };
 
 const useConfigStore = create<SettingStore>()(
@@ -36,8 +43,8 @@ const useConfigStore = create<SettingStore>()(
         persist(immer<SettingStore>(
             (set, get) => ({
                 config: defaultConfig,
-                hasAccessCodePermission: process.env.EDIT_CODE===undefined,
-                hasEditCodePermission: process.env.EDIT_CODE===undefined,
+                hasAccessCodePermission: process.env.EDIT_CODE === undefined,
+                hasEditCodePermission: process.env.EDIT_CODE === undefined,
                 resetCodeConfig: () => {
                     set((state) => {
                         state.config.codeConfig = { ...defaultConfig.codeConfig }
@@ -46,6 +53,11 @@ const useConfigStore = create<SettingStore>()(
                 resetAllConfig: () => {
                     set((state) => {
                         state.config = { ...defaultConfig }
+                    })
+                },
+                resetGeneralConfig: () => {
+                    set((state) => {
+                        state.config.generalConfig = { ...defaultConfig.generalConfig }
                     })
                 },
                 setConfig: (callback) => {

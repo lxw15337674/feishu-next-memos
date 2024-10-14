@@ -20,11 +20,11 @@ import { useThrottleFn } from 'ahooks';
 import { useToast } from '../ui/use-toast';
 import { useState } from 'react';
 import { downloadFile, uploadFile } from '../../utils/file';
-import {  parseMastodonData } from '../../utils/importData';
+import { parseMastodonData } from '../../utils/importData';
 import useImportMemos from './useImportMemos';
 import Icon from '../Icon';
 export function Setting() {
-    const { config,  resetCodeConfig, setEditCodePermission } = useConfigStore()
+    const { config, setConfig, resetGeneralConfig, setEditCodePermission } = useConfigStore()
     const { toast } = useToast()
     const [editCode, setEditCode] = useState(config.codeConfig.editCode)
     const { run: debounceSetEditCodePermission } = useThrottleFn(async () => {
@@ -105,8 +105,33 @@ export function Setting() {
             <DialogContent className="sm:max-w-68 max-h-[80vh] overflow-auto no-scrollbar" >
                 <DialogHeader>
                     <DialogTitle>设置</DialogTitle>
+                    <DialogDescription>
+                        个性化设置
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
+                    <div className="flex items-center justify-between space-x-4">
+                        <Label className="flex flex-col space-y-1">
+                            <span>
+                                简洁模式
+                            </span>
+                            <span className="text-xs font-normal leading-snug text-muted-foreground">
+                                简洁模式下，不显示笔记的创建时间和修改时间,默认为关闭
+                            </span>
+                        </Label>
+                        <Switch checked={
+                            config.generalConfig.isSimpleMode
+                        } onCheckedChange={(checked) => {
+                            setConfig(config => {
+                                config.generalConfig.isSimpleMode = checked
+                                return config
+                            })
+                        }} />
+                    </div>
+                    <Button type="reset" className="w-full" variant="destructive" onClick={resetGeneralConfig}>
+                        重置设置
+                    </Button>
+                    <Separator className="my-4" />
                     <div className="space-y-2">
                         <Label className="flex flex-col space-y-1 ">
                             <span>
@@ -136,7 +161,7 @@ export function Setting() {
                         校验编辑密码
                     </Button>
                     <Button type="submit" className="w-full" variant="destructive" onClick={() => {
-                        resetCodeConfig()
+                        resetGeneralConfig()
                         router.push('/login')
                     }}>
                         重置密码
