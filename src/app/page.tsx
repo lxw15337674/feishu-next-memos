@@ -7,6 +7,7 @@ import MemoFilter from '@/components/MemoFilter';
 import { unstable_cache } from 'next/cache';
 import { Memo } from '../api/type';
 import { getRecordsActions } from '../api/larkActions';
+import MobileHeader from '../components/MobileHeader';
 
 const getCachedAllMemos = unstable_cache(
   async () => {
@@ -30,7 +31,7 @@ export default async function Home() {
   const allMemos = await getCachedAllMemos()
   return (
     <div className="flex flex-col md:flex-row max-w-[100vw] min-h-screen">
-      {/* <MobileHeader /> */}
+      <MobileHeader />
       <LeftSide />
       <div className="flex-1 md:ml-40 md:pl-6 px-4 overflow-hidden">
         <main className="flex flex-col h-full md:mr-60">

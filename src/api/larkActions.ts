@@ -1,9 +1,9 @@
 'use server';
 import * as lark from '@larksuiteoapi/node-sdk';
-import { Bitable, Filter, Memo } from './type';
+import { Bitable, Filter, LinkType, Memo } from './type';
 import { createApi } from 'unsplash-js';
 import { Random } from 'unsplash-js/dist/methods/photos/types';
-import { splitMode } from '../utils/parser';
+import { NewMemo, parseFields } from '../utils/parser';
 import { unstable_cache } from 'next/cache';
 const APP_ID = process.env.APP_ID as string
 const APP_SECRET = process.env.APP_SECRET as string
@@ -110,10 +110,11 @@ export const getAllFields = async () => {
 }
 
 
-export const createNewMemo = async (content: string, fileTokens?: string[]) => {
+
+export const createNewMemo = async (newMemo: NewMemo) => {
     try {
-        const fields = splitMode(content, fileTokens) as Record<string, any>;
-        await client.bitable.appTableRecord.create({
+        const fields = parseFields(newMemo) as Record<string, any>;
+        const { data } = await client.bitable.appTableRecord.create({
             path: {
                 app_token: APP_TOKEN,
                 table_id: TABLE_ID,
@@ -122,7 +123,11 @@ export const createNewMemo = async (content: string, fileTokens?: string[]) => {
                 fields,
             },
         });
-        console.log("添加成功");
+        if (data) {
+            console.log("添加成功");
+        } else {
+            throw new Error("添加失败");
+        }
     } catch (error) {
         console.error("添加失败:", error);
         throw error;
@@ -163,9 +168,9 @@ export const getMemoByIdAction = async (record_id: string) => {
     }
 };
 
-export const updateMemoAction = async (record_id: string, content: string, fileTokens?: string[]) => {
+export const updateMemoAction = async (record_id: string, newMemo: NewMemo) => {
     try {
-        const fields = splitMode(content, fileTokens) as Record<string, any>;
+        const fields = parseFields(newMemo)
         const { data } = await client.bitable.appTableRecord.update({
             path: {
                 app_token: APP_TOKEN,
@@ -189,7 +194,7 @@ export const getRandomImage = async () => {
     const res = await unsplash.photos.getRandom({
         query: 'wallpapers',
         orientation: 'landscape',
-    }).catch((e) => {
+    }).catch((e: any) => {
         console.error(e);
     });
     return (res?.response as Random).urls?.regular;

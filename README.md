@@ -10,7 +10,12 @@
 - **Generate Multiple Share Card**
 - **Open-Source Code**
 
-   
+
+## Deploy your own
+1. **Fork this repository**
+2. **Create a new Lark app**
+3. **Configure the environment variables**
+4. **Deploy to Vercel**
 
 ## Primary tech stack
 

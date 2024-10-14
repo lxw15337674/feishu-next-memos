@@ -7,8 +7,8 @@ interface CodeConfig {
     editCode: string;
 }
 interface GeneralConfig {
-    isShowTags: boolean;
-    isShowTagsInShareCard: boolean;
+    // 是否简易模式
+    isSimpleMode: boolean;
 }
 interface Config {
     codeConfig: CodeConfig;
@@ -34,8 +34,7 @@ const defaultConfig: Config = {
         editCode: '',
     },
     generalConfig: {
-        isShowTags: true,
-        isShowTagsInShareCard: false,
+        isSimpleMode: false,
     }
 };
 
@@ -44,8 +43,8 @@ const useConfigStore = create<SettingStore>()(
         persist(immer<SettingStore>(
             (set, get) => ({
                 config: defaultConfig,
-                hasAccessCodePermission: process.env.EDIT_CODE===undefined,
-                hasEditCodePermission: process.env.EDIT_CODE===undefined,
+                hasAccessCodePermission: process.env.EDIT_CODE === undefined,
+                hasEditCodePermission: process.env.EDIT_CODE === undefined,
                 resetCodeConfig: () => {
                     set((state) => {
                         state.config.codeConfig = { ...defaultConfig.codeConfig }

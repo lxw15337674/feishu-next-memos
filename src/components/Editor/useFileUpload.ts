@@ -34,9 +34,9 @@ export const useFileUpload = (defaultImages: ImageType[] = []) => {
             });
             return;
         }
-        if (file.size >= 5 * 1024 * 1024) {
+        if (file.size >= 20 * 1024 * 1024) {
             toast({
-                title: '文件大小不能超过5MB',
+                title: '文件大小不能超过20MB',
                 description: '请重新选择文件',
                 variant: 'destructive',
             });

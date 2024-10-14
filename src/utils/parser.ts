@@ -1,4 +1,4 @@
-import { newMemo } from '../api/type';
+import { LinkType } from '../api/type';
 
 enum ContentType {
   Text = 'text',
@@ -77,31 +77,39 @@ export function convertGMTDateToLocal(gmtDateString: Date) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+export interface NewMemo {
+  content: string;
+  fileTokens?: string[];
+  link?: LinkType
+}
+
+
 // 拆分模式：标签和文本分开。
-export function splitMode(content: string, fileTokens?: string[]): newMemo {
-  // 将字符串按换行符分割成数组
-  const lines = content.split('\n');
-  const tags: string[] = []
-  const richTexts = lines.map((line) => {
-    let text = ''
-    const content = parseContent(line)
-    for (const item of content) {
+export function parseFields(newMemo: NewMemo): Record<string, any> {
+  const { content, fileTokens, link } = newMemo;
+
+  const tags: string[] = [];
+  const textLines: string[] = [];
+
+  content.split('\n').forEach(line => {
+    const parsedLine = parseContent(line);
+    const lineText: string[] = [];
+    
+    parsedLine.forEach(item => {
       if (item.type === 'tag') {
-        tags.push(item.text.slice(1))
+        tags.push(item.text.slice(1));
+      } else {
+        lineText.push(item.text);
       }
-      text += item.text
-    }
-    return text
-  })
-  let images: { file_token: string }[] = []
-  if (fileTokens) {
-    images = fileTokens.map((file_token) => ({
-      file_token
-    }))
-  }
+    });
+    
+    textLines.push(lineText.join(''));
+  });
+
   return {
-    content: content,
+    content: textLines.join('\n'),
     tags,
-    images
-  }
+    images: fileTokens?.map(file_token => ({ file_token })) ?? [],
+    link: link?.link ? link : undefined
+  };
 }

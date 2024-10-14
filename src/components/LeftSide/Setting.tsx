@@ -20,7 +20,7 @@ import { useThrottleFn } from 'ahooks';
 import { useToast } from '../ui/use-toast';
 import { useState } from 'react';
 import { downloadFile, uploadFile } from '../../utils/file';
-import {  parseMastodonData } from '../../utils/importData';
+import { parseMastodonData } from '../../utils/importData';
 import useImportMemos from './useImportMemos';
 import Icon from '../Icon';
 export function Setting() {
@@ -113,35 +113,18 @@ export function Setting() {
                     <div className="flex items-center justify-between space-x-4">
                         <Label className="flex flex-col space-y-1">
                             <span>
-                                显示标签
+                                简洁模式
                             </span>
                             <span className="text-xs font-normal leading-snug text-muted-foreground">
-                                是否在笔记正文中显示标签
+                                简洁模式下，不显示笔记的创建时间和修改时间,默认为关闭
                             </span>
                         </Label>
                         <Switch checked={
-                            config.generalConfig.isShowTags
+                            config.generalConfig.isSimpleMode
                         } onCheckedChange={(checked) => {
                             setConfig(config => {
-                                config.generalConfig.isShowTags = checked
+                                config.generalConfig.isSimpleMode = checked
                                 return config
-                            })
-                        }} />
-                    </div>
-                    <div className="flex items-center justify-between space-x-4">
-                        <Label className="flex flex-col space-y-1">
-                            <span>
-                                分享卡片显示标签
-                            </span>
-                            <span className="text-xs font-normal leading-snug text-muted-foreground">
-                                分享卡片默认是否显示标签
-                            </span>
-                        </Label>
-                        <Switch checked={
-                            config.generalConfig.isShowTagsInShareCard
-                        } onCheckedChange={(checked) => {
-                            setConfig(config => {
-                                config.generalConfig.isShowTagsInShareCard = checked
                             })
                         }} />
                     </div>
