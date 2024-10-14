@@ -101,7 +101,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink =
       <Textarea
         className="h-full bg-card text-card-foreground"
         placeholder="此刻的想法..."
-        minRows={3}
+        minRows={2}
         autoFocus
         defaultValue={defaultValue}
         slotProps={{ textarea: { ref: setEditorRef } }}
