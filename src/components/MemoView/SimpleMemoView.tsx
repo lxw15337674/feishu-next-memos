@@ -40,7 +40,7 @@ const MemoView = ({
     }, [content])
 
     const localTime = useMemo(() => {
-        return convertGMTDateToLocal(created_time);
+        return created_time ? convertGMTDateToLocal(new Date(created_time)) : null;
     }, [created_time]);
 
     return (
