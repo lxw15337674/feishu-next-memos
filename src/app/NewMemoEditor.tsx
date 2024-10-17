@@ -4,7 +4,6 @@ import Editor from '@/components/Editor';
 import { useRequest } from 'ahooks';
 import { createNewMemo } from '../api/larkActions';
 import useMemoStore from '../store/memo';
-import { sleep } from '../utils/promiseQueue';
 import { useToast } from '../components/ui/use-toast';
 
 const NewMemoEditor: React.FC = () => {
@@ -17,7 +16,6 @@ const NewMemoEditor: React.FC = () => {
                 title: '创建成功',
                 description: '已成功创建新笔记',
             });
-            await sleep(3000);
             fetchFirstData()
         }
     })
