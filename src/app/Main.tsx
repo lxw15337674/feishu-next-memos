@@ -2,7 +2,7 @@
 import MemoView from '@/components/MemoView/MemoView';
 import useMemoStore from '@/store/memo';
 import useTagStore from '@/store/tag';
-import { useFavicon, useMount, useTitle } from 'ahooks';
+import {  useMount } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
@@ -12,8 +12,6 @@ import SimpleMemoView from '../components/MemoView/SimpleMemoView';
 
 
 export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
-    useTitle('Fmemos')
-    useFavicon('/favicon.ico')
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
     const { fetchTags } = useTagStore();
     const { setAllMemos } = useCountStore()
