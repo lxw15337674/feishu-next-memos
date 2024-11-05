@@ -1,4 +1,4 @@
-import React, { LegacyRef } from 'react';
+import React, { Ref } from 'react';
 import { CardProps } from './XiaohongshuCard';
 import {
     Avatar,
