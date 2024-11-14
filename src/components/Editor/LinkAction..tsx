@@ -85,7 +85,7 @@ export default function LinkAction({ link, setLink }: Props) {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="text">文本 (Optional)</Label>
+                            <Label htmlFor="text">标题(Optional)</Label>
                             <Input
                                 id="text"
                                 type="text"
