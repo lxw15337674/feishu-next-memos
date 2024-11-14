@@ -19,7 +19,7 @@ const MobileHeader = (props: Props) => {
   return (
     <div
       className={classNames(
-        'sticky top-0 pt-4 px-4  bg-opacity-80 backdrop-blur-lg flex md:hidden flex-row justify-between items-center w-full h-auto flex-nowrap shrink-0 z-1',
+        'sticky top-0 p-4  bg-opacity-80 backdrop-blur-lg flex md:hidden flex-row justify-between items-center w-full h-auto flex-nowrap shrink-0 z-1000 ',
         className,
       )}
     >
@@ -35,7 +35,7 @@ const MobileHeader = (props: Props) => {
         <div className='mr-1'>
           <ModeToggle />
         </div>
-        <Setting/>
+        <Setting />
       </div>
     </div>
   );

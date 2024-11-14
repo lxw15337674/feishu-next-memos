@@ -27,9 +27,9 @@ export default function LinkAction({ link, setLink }: Props) {
     }, [link])
 
     const handleSubmit = async () => {
+        setIsOpen(false)
         const title = await fetchTitle(url);
         setLink({ link: url, text: text || title })
-        setIsOpen(false)
     }
 
     const isValidUrl = (string: string) => {
