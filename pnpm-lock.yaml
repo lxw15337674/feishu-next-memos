@@ -59,11 +59,10 @@ importers:
         version: 1.1.1(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@radix-ui/react-toast':
         specifier: ^1.2.2
-        version: 1.2.2(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.2(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@serwist/next':
         specifier: ^9.0.9
-        version: 9.0.9(next@14.2.3(@babel/core@7.25.8)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)
-        version: 1.2.2(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
+        version: 9.0.10(next@15.0.2(@babel/core@7.26.0)(babel-plugin-macros@3.1.0)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028))(typescript@5.6.3)
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -217,7 +216,7 @@ importers:
         version: 3.3.3
       serwist:
         specifier: ^9.0.9
-        version: 9.0.9(typescript@5.6.3)
+        version: 9.0.10(typescript@5.6.3)
       tailwindcss:
         specifier: ^3.4.15
         version: 3.4.15(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3))
@@ -898,14 +897,12 @@ packages:
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
-    libc: [glibc]
 
   '@next/swc-linux-arm64-musl@15.0.2':
     resolution: {integrity: sha512-BjH4ZSzJIoTTZRh6rG+a/Ry4SW0HlizcPorqNBixBWc3wtQtj4Sn9FnRZe22QqrPnzoaW0ctvSz4FaH4eGKMww==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
     libc: [musl]
 
   '@next/swc-linux-x64-gnu@15.0.2':
@@ -914,14 +911,12 @@ packages:
     cpu: [x64]
     os: [linux]
     libc: [glibc]
-    libc: [glibc]
 
   '@next/swc-linux-x64-musl@15.0.2':
     resolution: {integrity: sha512-AMfZfSVOIR8fa+TXlAooByEF4OB00wqnms1sJ1v+iu8ivwvtPvnkwdzzFMpsK5jA2S9oNeeQ04egIWVb4QWmtQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
     libc: [musl]
 
   '@next/swc-win32-arm64-msvc@15.0.2':
@@ -1403,8 +1398,8 @@ packages:
   '@rushstack/eslint-patch@1.10.4':
     resolution: {integrity: sha512-WJgX9nzTqknM393q1QJDJmoW28kUfEnybeTfVNcNAPnIx210RXm2DiXiHzfNPJNIUUb1tJnz/l4QGtJ30PgWmA==}
 
-  '@serwist/build@9.0.9':
-    resolution: {integrity: sha512-HhuRDt/c4vLGZ6k3ExCdZFRLub+ydw3R+rRz2dh9+/SUuGmvR8aFz44Ufuerh6V2rG/DuvjN0HJlOrb4OUOo5Q==}
+  '@serwist/build@9.0.10':
+    resolution: {integrity: sha512-7txmKhDw65CZZilT4lcV8A47/DD/Tdx4VUBlINSdECCx/pUNSLlRAwmKgb4DLqwQ9+Ert+FGEonPn1j4ZiAFUA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
@@ -1412,8 +1407,8 @@ packages:
       typescript:
         optional: true
 
-  '@serwist/next@9.0.9':
-    resolution: {integrity: sha512-mLUn/cwh1Icwi6IFRUBy3xflnrUhycthiCji2Y4wEpxmRKmrVA5aqwbHRNdWJwbSdO1JSpkpGryn6MCInd2D3w==}
+  '@serwist/next@9.0.10':
+    resolution: {integrity: sha512-E5gpZTwyQesubn8rASs3oNj+RmQd7whBlcWqEVD5aGxQntgpAJeUVGgALkL1aUfUD/CvgWHKyLJ4Ih6akKKZUw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       next: '>=14.0.0'
@@ -1422,8 +1417,8 @@ packages:
       typescript:
         optional: true
 
-  '@serwist/webpack-plugin@9.0.9':
-    resolution: {integrity: sha512-Yytizgxcc4577ViUuJEej6OlJlcQHUIUCTsGCrdIqKJxSsbz0yDv4Xx+Yria2UDFAu8nmTqA2PSgI/gg0OYZ0A==}
+  '@serwist/webpack-plugin@9.0.10':
+    resolution: {integrity: sha512-9DGkOjqeIrn6yulyP0VEt/F7EXrYKBSa9jOFFJdmeEXL0SdR5cbzEixTaxTWB1IBHnNduWvFavubxv8dtjyMOg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       typescript: '>=5.0.0'
@@ -1434,8 +1429,8 @@ packages:
       webpack:
         optional: true
 
-  '@serwist/window@9.0.9':
-    resolution: {integrity: sha512-KfyiBz4BKKs7AxB76NOKnYqNktr1KFaC121xxM0BAusJaqkaG9eAzAGMKeeRxU5S0uA/gm3pQKhf8FnLiliqig==}
+  '@serwist/window@9.0.10':
+    resolution: {integrity: sha512-M3VRAyLR8UEZcRYFRZrRF6zvZXJkk1hDtU7MVrDmqtoZ6rvB+PCWWoNacEFi4Rk/7ydmt7Vl8IGx8IanxIakYA==}
     peerDependencies:
       typescript: '>=5.0.0'
     peerDependenciesMeta:
@@ -3588,8 +3583,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  serwist@9.0.9:
-    resolution: {integrity: sha512-T3WzdvUjvK1AzNSTSuZkHWWKm0X5UuUaD3jvukHDFaJDmsLZBq0HGlrZ+bpOHoRFwhJSXwuH/V5ksE0I78wwvQ==}
+  serwist@9.0.10:
+    resolution: {integrity: sha512-r6DiPmR99ZqfSo1T0SePgyUnQz0QmbVF6XywjWtCk1Qgk4EBAdrYRr9Y4Ul8Xge/jAnpEMyrmdSX9N1vgxWVgA==}
     peerDependencies:
       typescript: '>=5.0.0'
     peerDependenciesMeta:
@@ -5405,7 +5400,7 @@ snapshots:
 
   '@rushstack/eslint-patch@1.10.4': {}
 
-  '@serwist/build@9.0.9(typescript@5.6.3)':
+  '@serwist/build@9.0.10(typescript@5.6.3)':
     dependencies:
       common-tags: 1.8.2
       glob: 10.4.5
@@ -5415,33 +5410,33 @@ snapshots:
     optionalDependencies:
       typescript: 5.6.3
 
-  '@serwist/next@9.0.9(next@14.2.3(@babel/core@7.25.8)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.6.3)':
+  '@serwist/next@9.0.10(next@15.0.2(@babel/core@7.26.0)(babel-plugin-macros@3.1.0)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028))(typescript@5.6.3)':
     dependencies:
-      '@serwist/build': 9.0.9(typescript@5.6.3)
-      '@serwist/webpack-plugin': 9.0.9(typescript@5.6.3)
-      '@serwist/window': 9.0.9(typescript@5.6.3)
+      '@serwist/build': 9.0.10(typescript@5.6.3)
+      '@serwist/webpack-plugin': 9.0.10(typescript@5.6.3)
+      '@serwist/window': 9.0.10(typescript@5.6.3)
       chalk: 5.3.0
       glob: 10.4.5
-      next: 14.2.3(@babel/core@7.25.8)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      serwist: 9.0.9(typescript@5.6.3)
+      next: 15.0.2(@babel/core@7.26.0)(babel-plugin-macros@3.1.0)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
+      serwist: 9.0.10(typescript@5.6.3)
       zod: 3.23.8
     optionalDependencies:
       typescript: 5.6.3
     transitivePeerDependencies:
       - webpack
 
-  '@serwist/webpack-plugin@9.0.9(typescript@5.6.3)':
+  '@serwist/webpack-plugin@9.0.10(typescript@5.6.3)':
     dependencies:
-      '@serwist/build': 9.0.9(typescript@5.6.3)
+      '@serwist/build': 9.0.10(typescript@5.6.3)
       pretty-bytes: 6.1.1
       zod: 3.23.8
     optionalDependencies:
       typescript: 5.6.3
 
-  '@serwist/window@9.0.9(typescript@5.6.3)':
+  '@serwist/window@9.0.10(typescript@5.6.3)':
     dependencies:
       '@types/trusted-types': 2.0.7
-      serwist: 9.0.9(typescript@5.6.3)
+      serwist: 9.0.10(typescript@5.6.3)
     optionalDependencies:
       typescript: 5.6.3
 
@@ -8039,7 +8034,7 @@ snapshots:
 
   semver@7.6.3: {}
 
-  serwist@9.0.9(typescript@5.6.3):
+  serwist@9.0.10(typescript@5.6.3):
     dependencies:
       idb: 8.0.0
     optionalDependencies:
