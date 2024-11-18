@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import Icon from '../Icon'
 import { LinkType } from '../../api/type'
 import { ExternalLinkIcon } from 'lucide-react'
+import axios from 'axios'
+import { fetchTitle } from '../../api/requestActions'
 
 interface Props {
     link: LinkType
@@ -24,9 +26,10 @@ export default function LinkAction({ link, setLink }: Props) {
         setText(link?.text ?? '')
     }, [link])
 
-    const handleSubmit = () => {
-        setLink({ link: url, text })
+    const handleSubmit = async () => {
         setIsOpen(false)
+        const title = await fetchTitle(url);
+        setLink({ link: url, text: text || title })
     }
 
     const isValidUrl = (string: string) => {
@@ -43,8 +46,16 @@ export default function LinkAction({ link, setLink }: Props) {
             <Popover open={isOpen} onOpenChange={setIsOpen}>
                 <PopoverTrigger asChild>
                     <Button variant="ghost" size="icon"
-                        className={`${link.link ? 'text-blue-800    dark:text-blue-400 ' : ''} `}>
-                        <Icon.Link size={20} />
+                        className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} w-auto px-2`}>
+                        {
+                            link.link ? (
+                                <span className="truncate max-w-[40vw]" title={text }>
+                                    {text }
+                                </span>
+                            ) : (
+                                <Icon.Link size={20} />
+                            )
+                        }
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80">
@@ -74,7 +85,7 @@ export default function LinkAction({ link, setLink }: Props) {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="text">文本 (Optional)</Label>
+                            <Label htmlFor="text">标题(Optional)</Label>
                             <Input
                                 id="text"
                                 type="text"

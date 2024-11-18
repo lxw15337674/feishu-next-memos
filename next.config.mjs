@@ -15,6 +15,11 @@ const nextConfig = withSerwist({
             hmrRefreshes: true,
         },
     },
+      experimental: {
+        serverActions: {
+            bodySizeLimit: '20mb' // Set desired value here
+        }
+    }
 })
 
 export default nextConfig;

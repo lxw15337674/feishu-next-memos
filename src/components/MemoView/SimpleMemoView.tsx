@@ -1,18 +1,12 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
-import Tag from '../Tag';
-import MemoActionMenu from './MemoActionMenu';
+import React, { useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { convertGMTDateToLocal, parseContent } from '@/utils/parser';
-import "@github/relative-time-element";
-import Editor from '../Editor';
-import useMemoStore from '@/store/memo';
-import { useMap, useRequest } from 'ahooks';
-import useConfigStore from '@/store/config';
+import { useMap } from 'ahooks';
 import { PhotoProvider } from 'react-photo-view';
 import ImageViewer from '../ImageViewer';
 import { ItemFields } from '../../api/type';
-import { getImageUrlAction, updateMemoAction } from '../../api/larkActions';
+import { getImageUrlAction } from '../../api/larkActions';
 
 const MemoView = ({
     content,

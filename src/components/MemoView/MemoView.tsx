@@ -8,7 +8,6 @@ import "@github/relative-time-element";
 import Editor from '../Editor';
 import useMemoStore from '@/store/memo';
 import { useMap, useRequest } from 'ahooks';
-import useConfigStore from '@/store/config';
 import { PhotoProvider } from 'react-photo-view';
 import ImageViewer from '../ImageViewer';
 import { ItemFields } from '../../api/type';
@@ -29,7 +28,6 @@ const MemoView = ({
     return last_edited_time ? convertGMTDateToLocal(new Date(last_edited_time)) : ' ';
   }, [last_edited_time]);
   const { updateMemo } = useMemoStore();
-  const { config } = useConfigStore()
   const { runAsync: updateRecord } = useRequest(updateMemoAction, {
     manual: true,
     onSuccess: (id) => {
@@ -86,7 +84,10 @@ const MemoView = ({
           {time}
           {isRecentTime &&
             <span className='ml-2'>
-              {created_time && (<relative-time datetime={new Date(created_time).toISOString()} tense="past" />)}
+              {created_time && (
+                // @ts-ignore
+                <relative-time datetime={new Date(created_time).toISOString()} tense="past" />
+              )}
             </span>
           }
         </div>

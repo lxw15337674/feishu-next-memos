@@ -1,15 +1,9 @@
 {
   "compilerOptions": {
-    "types": [
-      // Other types...
-      // This allows Serwist to type `window.serwist`.
-      "@serwist/next/typings"
-    ],
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext",
-      "webworker"
+      "esnext"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -31,7 +25,8 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -42,5 +37,10 @@
   "exclude": [
     "node_modules",
     "public/sw.js"
-  ]
+  ],
+  "types": [
+    // Other types...
+    // This allows Serwist to type `window.serwist`.
+    "@serwist/next/typings"
+  ],
 }

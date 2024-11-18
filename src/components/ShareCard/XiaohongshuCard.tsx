@@ -1,10 +1,10 @@
-import React, { LegacyRef } from 'react';
+import React, { Ref } from 'react';
 
 export interface CardProps {
     url?: string;
     content: string[];
     date: string;
-    cardRef?: LegacyRef<HTMLDivElement>;
+    cardRef?: Ref<HTMLDivElement>;
     userName?: string;
 }
 
