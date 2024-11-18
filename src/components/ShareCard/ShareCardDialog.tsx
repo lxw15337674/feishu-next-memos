@@ -15,9 +15,7 @@ import useShareCardStore from "@/store/shareCard";
 import ImageBackgroundCard from "./ImageBackgroundCard";
 import XiaohongshuCard from "./XiaohongshuCard";
 import { toBlob } from "html-to-image";
-import { Checkbox } from "../ui/checkbox";
 import SpotifyCard from "./SpotifyCard";
-import useConfigStore from "@/store/config";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -69,13 +67,12 @@ const imageDownload = async (card: HTMLDivElement) => {
 };
 const ShareCardDialog = () => {
     const { text, open, setOpen } = useShareCardStore();
-    const { config } = useConfigStore()
     const { data: url, run, loading } = useRequest(getRandomImage, {
         manual: false
     })
     const content = useMemo(() => {
         return text.map((content) => {
-            return content.filter((item) => item.type === 'text' ||   item.type === 'tag')
+            return content.filter((item) => item.type === 'text' || item.type === 'tag')
         }).map((item) => {
             return item.map((i) => i.text).join('')
         });
@@ -113,10 +110,14 @@ const ShareCardDialog = () => {
                         </div>
                     </DialogDescription>
                 </DialogHeader>
-                <DialogFooter className="space-y-2">
-                    <Button variant="outline" onClick={() => run()} disabled={loading}>
+                <DialogFooter className="space-y-4 md:space-y-0  md:space-x-2 space-x-0">
+                    <Button variant="destructive"
+                        onClick={() => setOpen(false)} className="w-full md:w-auto">
+                        关闭
+                    </Button>
+                    <Button variant="outline" onClick={() => run()} disabled={loading} className="w-full md:w-auto">
                         {
-                            loading && <Icon.Loader2 size={20} className="animate-spin mr-1" />
+                            loading && <Icon.Loader2 size={20} className="animate-spin " />
                         }
                         更换背景图
                     </Button>
@@ -146,9 +147,10 @@ const ShareCardDialog = () => {
                             }
                         </DropdownMenuContent>
                     </DropdownMenu>
+
                 </DialogFooter>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     </>
 };
 
