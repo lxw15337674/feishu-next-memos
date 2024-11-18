@@ -6,7 +6,7 @@ import 'react-photo-view/dist/react-photo-view.css';
 import { Metadata, Viewport } from 'next';
 
 const APP_NAME = "Fmemos";
-const APP_DEFAULT_TITLE = "Quick notes, powered by lark";
+const APP_DEFAULT_TITLE = "Fmemos";
 const APP_TITLE_TEMPLATE = "%s - Fmemos";
 const APP_DESCRIPTION = "Quick notes, powered by lark";
 
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-  },
+  }, 
 };
 
 export const viewport: Viewport = {
