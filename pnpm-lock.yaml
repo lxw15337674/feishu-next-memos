@@ -184,6 +184,9 @@ importers:
       '@types/react-mentions':
         specifier: ^4.4.1
         version: 4.4.1
+      '@types/serviceworker':
+        specifier: ^0.0.103
+        version: 0.0.103
       '@types/textarea-caret':
         specifier: ^3.0.3
         version: 3.0.3
@@ -1546,6 +1549,9 @@ packages:
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+
+  '@types/serviceworker@0.0.103':
+    resolution: {integrity: sha512-EOiLGcQeb/r/POn4Nlbz8XVApoYPtLNACbaqpge6sSuydA8nj/5S6oqISFRwQ33n8pIOIrWFm17S9cnmrO2QAw==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -5569,6 +5575,8 @@ snapshots:
       '@types/react': types-react@19.0.0-rc.1
 
   '@types/semver@7.5.8': {}
+
+  '@types/serviceworker@0.0.103': {}
 
   '@types/stack-utils@2.0.3': {}
 
