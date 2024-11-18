@@ -11,7 +11,7 @@ interface Props {
 }
 
 const MobileHeader = (props: Props) => {
-  const { className, children } = props;
+  const { className } = props;
   const isMobile = useIsMobile();
   if (!isMobile) {
     return null;
@@ -25,11 +25,6 @@ const MobileHeader = (props: Props) => {
     >
       <div className="flex flex-row justify-start items-center mr-2 shrink-0 overflow-hidden">
         <NavigationDrawer />
-        {/* <span
-          className="font-bold text-lg leading-10 mr-1 text-ellipsis shrink-0 cursor-pointer overflow-hidden text-gray-700 dark:text-gray-300"
-        >
-          笔记
-        </span> */}
       </div>
       <div className="flex flex-row justify-end items-center ">
         <div className='mr-1'>
