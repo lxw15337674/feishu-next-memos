@@ -61,7 +61,7 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
       '@serwist/next':
-        specifier: ^9.0.9
+        specifier: ^9.0.10
         version: 9.0.10(next@15.0.2(@babel/core@7.26.0)(babel-plugin-macros@3.1.0)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028))(typescript@5.6.3)
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -215,7 +215,7 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
       serwist:
-        specifier: ^9.0.9
+        specifier: ^9.0.10
         version: 9.0.10(typescript@5.6.3)
       tailwindcss:
         specifier: ^3.4.15
