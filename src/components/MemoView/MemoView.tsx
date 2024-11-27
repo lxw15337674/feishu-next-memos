@@ -134,11 +134,9 @@ const MemoView = ({
       }
       {
         link?.link && <div className='mb-2'>
-          <a href={link.link} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-            {link.text || link.link}
+          <a href={link.link} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline truncate w-full inline-block">
           </a>
         </div>
-
       }
       {
         tags.length > 0 && <div className='mb-2 '>

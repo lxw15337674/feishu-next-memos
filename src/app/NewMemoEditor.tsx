@@ -25,9 +25,7 @@ const NewMemoEditor: React.FC = () => {
         }
     })
     return (
-        <div >
             <Editor onSubmit={createRecord} />
-        </div>
     );
 };
 

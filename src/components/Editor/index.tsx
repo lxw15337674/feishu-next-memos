@@ -11,7 +11,7 @@ import { useFileUpload } from './useFileUpload';
 import ImageViewer from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
 import { ImageType, LinkType } from '../../api/type';
-import LinkAction from './LinkAction.';
+import LinkAction from './LinkAction';
 import { NewMemo } from '../../utils/parser';
 
 interface Props {

@@ -17,7 +17,6 @@ const getCachedAllMemos = unstable_cache(
       const data = await getRecordsActions({ page_token });
       allMemos.push(...data?.items ?? []);
       page_token = data?.page_token;
-      // 添加 0.2 秒延迟
       await new Promise(resolve => setTimeout(resolve, 200)); 
     } while (page_token);
     console.log("所有数据获取成功");

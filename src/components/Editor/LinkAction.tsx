@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Icon from '../Icon'
 import { LinkType } from '../../api/type'
-import { ExternalLinkIcon } from 'lucide-react'
-import axios from 'axios'
+import { ExternalLinkIcon,  } from 'lucide-react'
 import { fetchTitle } from '../../api/requestActions'
 
 interface Props {
@@ -20,6 +19,7 @@ export default function LinkAction({ link, setLink }: Props) {
     const [isOpen, setIsOpen] = useState(false)
     const [url, setUrl] = useState(link?.link ?? '')
     const [text, setText] = useState(link?.text ?? '')
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         setUrl(link?.link ?? '')
@@ -27,9 +27,11 @@ export default function LinkAction({ link, setLink }: Props) {
     }, [link])
 
     const handleSubmit = async () => {
+        setLoading(true)
         setIsOpen(false)
-        const title = await fetchTitle(url);
+        const title = await fetchTitle(url)
         setLink({ link: url, text: text || title })
+        setLoading(false)
     }
 
     const isValidUrl = (string: string) => {
@@ -48,9 +50,11 @@ export default function LinkAction({ link, setLink }: Props) {
                     <Button variant="ghost" size="icon"
                         className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} w-auto px-2`}>
                         {
-                            link.link ? (
-                                <span className="truncate max-w-[40vw]" title={text }>
-                                    {text }
+                            loading ? (
+                                <Icon.Loader2 className="animate-spin" size={20} />
+                            ) : link.link ? (
+                                <span className="truncate max-w-[40vw]" title={text}>
+                                    {text}
                                 </span>
                             ) : (
                                 <Icon.Link size={20} />
@@ -85,16 +89,16 @@ export default function LinkAction({ link, setLink }: Props) {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="text">标题(Optional)</Label>
+                            <Label htmlFor="text">标题</Label>
                             <Input
+                                disabled
                                 id="text"
                                 type="text"
-                                placeholder="Enter display text"
                                 value={text}
                                 onChange={(e) => setText(e.target.value)}
-                            />
+                  />
                         </div>
-                        <Button onClick={handleSubmit} className="w-full" disabled={!isValidUrl(url)}>
+                        <Button onClick={handleSubmit} className="w-full" disabled={!isValidUrl(url) || loading}>
                             提交
                         </Button>
                     </div>
