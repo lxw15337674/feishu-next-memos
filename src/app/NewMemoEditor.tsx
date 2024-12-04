@@ -20,7 +20,6 @@ const NewMemoEditor: React.FC = () => {
                 description: '已成功创建新笔记',
             });
             startConfettiAnimation();
-            await sleep(3000);
             fetchFirstData()
         }
     })
