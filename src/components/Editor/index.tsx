@@ -132,6 +132,23 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink =
               <Button
                 variant="ghost"
                 size="icon"
+                title='粘贴剪切板内容'
+                onClick={() => {
+                  if (!editorRef) {
+                    return
+                  }
+                  editorRef.focus()
+                  navigator.clipboard.readText().then(text => {
+                    replaceText(text, editorRef?.selectionStart, editorRef?.selectionStart, 0)
+                  })
+                }
+                }
+              >
+                <Icon.ClipboardPaste size={20} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 title='插入标签'
                 onClick={() => {
                   if (!editorRef) {
