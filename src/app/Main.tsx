@@ -44,11 +44,14 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
                 </p>
             }
         >
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2'>
             {memos.map((memo) => (
                 isSimpleMode 
                     ? <SimpleMemoView key={memo.record_id} id={memo.record_id} {...memo.fields} /> 
                     : <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
             ))}
+            </div>
+
         </InfiniteScroll>
     );
 }

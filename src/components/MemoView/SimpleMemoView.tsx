@@ -38,7 +38,7 @@ const MemoView = ({
     }, [created_time]);
 
     return (
-        <Card className="mb-2 px-2 py-1 rounded overflow-hidden w-full">
+        <Card className="px-2 py-1 rounded overflow-hidden w-full">
             <div className="font-medium">
                 {parsedContent?.map((item, index) => (
                     <p key={index} className="whitespace-pre-wrap break-words w-full leading-5 text-sm">

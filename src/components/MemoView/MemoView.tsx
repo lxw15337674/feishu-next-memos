@@ -68,7 +68,7 @@ const MemoView = ({
   }, [memoContentText])
   if (isEdited) {
     return (
-      <div className='mb-2'>
+      <div >
         <Editor onSubmit={(memo) => updateRecord(id, memo)} defaultValue={memoContentText.join('\n')}
           defaultImages={images.map(item => ({ ...item, url: urlMap.get(item.file_token)! }))}
           onCancel={() => setIsEdited(false)}
@@ -78,7 +78,7 @@ const MemoView = ({
     );
   }
   return (
-    <Card className="mb-2 px-2 py-2 rounded overflow-hidden  w-full ">
+    <Card className=" px-2 py-2 rounded overflow-hidden  w-full ">
       <div className="flex justify-between items-center text-sm text-gray-500">
         <div>
           {time}
