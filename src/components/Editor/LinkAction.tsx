@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Icon from '../Icon'
 import { LinkType } from '../../api/type'
-import { ExternalLinkIcon,  } from 'lucide-react'
+import { ExternalLinkIcon } from 'lucide-react'
 import { fetchTitle } from '../../api/requestActions'
 
 interface Props {
@@ -44,66 +44,64 @@ export default function LinkAction({ link, setLink }: Props) {
     }
 
     return (
-        <div className='flex items-center space-x-2'>
-            <Popover open={isOpen} onOpenChange={setIsOpen}>
-                <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon"
-                        className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} w-auto px-2`}>
-                        {
-                            loading ? (
-                                <Icon.Loader2 className="animate-spin" size={20} />
-                            ) : link.link ? (
-                                <span className="truncate max-w-[40vw]" title={text}>
-                                    {text}
-                                </span>
-                            ) : (
-                                <Icon.Link size={20} />
-                            )
-                        }
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80">
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="url">超链接</Label>
-                            <div className="flex items-center space-x-2">
-                                <Input
-                                    id="url"
-                                    type="url"
-                                    placeholder="Enter URL"
-                                    value={url}
-                                    className="flex-grow"
-                                    onChange={(e) => setUrl(e.target.value)}
-                                />
-                                {url && (
-                                    <a
-                                        href={url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                                        aria-label="Open link in new tab"
-                                    >
-                                        <ExternalLinkIcon className="h-4 w-4" />
-                                    </a>
-                                )}
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon"
+                    className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} px-2 w-auto md:max-w-[15vw] max-w-[30vw]`}>
+                    {
+                        loading ? (
+                            <Icon.Loader2 className="animate-spin" size={20} />
+                        ) : link.link ? (
+                            <div className="inline-block truncate " title={text}>
+                                {text}
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="text">标题</Label>
+                        ) : (
+                            <Icon.Link size={20} />
+                        )
+                    }
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="url">超链接</Label>
+                        <div className="flex items-center space-x-2">
                             <Input
-                                disabled
-                                id="text"
-                                type="text"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                  />
+                                id="url"
+                                type="url"
+                                placeholder="Enter URL"
+                                value={url}
+                                className="flex-grow truncate"
+                                onChange={(e) => setUrl(e.target.value)}
+                            />
+                            {url && (
+                                <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                                    aria-label="Open link in new tab"
+                                >
+                                    <ExternalLinkIcon className="h-4 w-4" />
+                                </a>
+                            )}
                         </div>
-                        <Button onClick={handleSubmit} className="w-full" disabled={!isValidUrl(url) || loading}>
-                            提交
-                        </Button>
                     </div>
-                </PopoverContent>
-            </Popover>
-        </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="text">标题</Label>
+                        <Input
+                            disabled
+                            id="text"
+                            type="text"
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                        />
+                    </div>
+                    <Button onClick={handleSubmit} className="w-full" disabled={!isValidUrl(url) || loading}>
+                        提交
+                    </Button>
+                </div>
+            </PopoverContent>
+        </Popover>
     )
 }
