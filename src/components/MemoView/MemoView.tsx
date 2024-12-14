@@ -12,6 +12,7 @@ import { PhotoProvider } from 'react-photo-view';
 import ImageViewer from '../ImageViewer';
 import { ItemFields } from '../../api/type';
 import { getImageUrlAction, updateMemoAction } from '../../api/larkActions';
+import Link from 'next/link';
 
 const MemoView = ({
   tags = [],
@@ -78,7 +79,7 @@ const MemoView = ({
     );
   }
   return (
-    <Card className=" px-2 py-2 rounded overflow-hidden  w-full ">
+    <Card className="px-2 py-2 rounded overflow-hidden w-full flex flex-col">
       <div className="flex justify-between items-center text-sm text-gray-500">
         <div>
           {time}
@@ -93,10 +94,10 @@ const MemoView = ({
         </div>
         <MemoActionMenu parsedContent={parsedContent} memoId={id} onEdit={() => setIsEdited(true)} />
       </div>
-      <div className="font-medium mb-2">
+      <div className="font-medium mb-2  flex-1">
         {parsedContent?.map((item, index) => (
           <p key={index} className="whitespace-pre-wrap break-words w-full leading-6 text-sm">
-            { 
+            {
               item.map((item, index) => {
                 if (item.type === 'tag') {
                   return <Tag
@@ -134,8 +135,11 @@ const MemoView = ({
       }
       {
         link?.link && <div className='mb-2'>
-          <a href={link.link} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline truncate w-full inline-block">
-          </a>
+          <Link href={link.link} target="_blank" rel="noreferrer"
+            title={link.text || link.link}
+            className="text-blue-500 hover:underline truncate w-full inline-block">
+            {link.text || link.link}
+          </Link>
         </div>
       }
       {

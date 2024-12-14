@@ -97,7 +97,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink =
   })
   const isLoading = loading || isUploading
   return (
-    <div className="relative w-auto overflow-x-hidden">
+    <div className="relative w-auto overflow-x-hidden h-full">
       <Textarea
         className="h-full bg-card text-card-foreground"
         placeholder="此刻的想法..."
