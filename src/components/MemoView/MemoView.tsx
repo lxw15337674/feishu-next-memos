@@ -69,13 +69,11 @@ const MemoView = ({
   }, [memoContentText])
   if (isEdited) {
     return (
-      <div >
-        <Editor onSubmit={(memo) => updateRecord(id, memo)} defaultValue={memoContentText.join('\n')}
-          defaultImages={images.map(item => ({ ...item, url: urlMap.get(item.file_token)! }))}
-          onCancel={() => setIsEdited(false)}
-          defaultLink={link}
-        />
-      </div>
+      <Editor onSubmit={(memo) => updateRecord(id, memo)} defaultValue={memoContentText.join('\n')}
+        defaultImages={images.map(item => ({ ...item, url: urlMap.get(item.file_token)! }))}
+        onCancel={() => setIsEdited(false)}
+        defaultLink={link}
+      />
     );
   }
   return (

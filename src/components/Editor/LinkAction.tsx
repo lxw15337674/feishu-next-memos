@@ -47,7 +47,7 @@ export default function LinkAction({ link, setLink }: Props) {
         <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon"
-                    className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} px-2 w-auto md:max-w-[15vw] max-w-[30vw]`}>
+                    className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} px-2 w-auto md:max-w-[10vw] max-w-[30vw]`}>
                     {
                         loading ? (
                             <Icon.Loader2 className="animate-spin" size={20} />

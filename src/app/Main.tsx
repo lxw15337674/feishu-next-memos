@@ -27,7 +27,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
         fetchInitData();
         fetchTags();
         setAllMemos(allMemos);
-    });
+    }); 
     return (
         <InfiniteScroll
             dataLength={memos?.length}
