@@ -1,13 +1,13 @@
 'use client'
 import useFilterStore from '@/store/filter';
 import Icon from '../Icon';
-import { Input } from '@mui/joy';
 import { useDebounceFn, useKeyPress } from 'ahooks';
 import { useRef } from 'react';
+import { Input } from '../ui/input';
 
 export function SearchInput() {
   const { setTextFilter } = useFilterStore();
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLInputElement>(null);
   const { run: debounceSetFilter } = useDebounceFn(setTextFilter, {
     wait: 500,
   });
@@ -19,7 +19,6 @@ export function SearchInput() {
 
   return (
     <Input
-      startDecorator={<Icon.Search size={16} />}
       placeholder="搜索笔记 Ctrl+K"
       className="bg-card"
       ref={ref}

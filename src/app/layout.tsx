@@ -1,5 +1,4 @@
 import './globals.css';
-import { CssVarsProvider } from '@mui/joy';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import 'react-photo-view/dist/react-photo-view.css';
@@ -42,7 +41,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-  }, 
+  },
 };
 
 export const viewport: Viewport = {
@@ -57,18 +56,16 @@ export default function RootLayout({
     <>
       <html suppressHydrationWarning>
         <body>
-          <CssVarsProvider defaultMode="dark">
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Toaster />
-              {children}
-            
-            </ThemeProvider>
-          </CssVarsProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster />
+            {children}
+
+          </ThemeProvider>
         </body>
       </html>
     </>

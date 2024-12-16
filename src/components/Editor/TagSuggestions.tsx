@@ -148,7 +148,7 @@ const TagSuggestions = ({ editorRef, replaceText }: Props) => {
             i === selected ? 'bg-zinc-300 dark:bg-zinc-600' : '',
           )}
         >
-          <OverflowTip>{tag}</OverflowTip>
+          {tag}
         </div>
       ))}
     </Card>
