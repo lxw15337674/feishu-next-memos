@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect,  useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import useTagStore from '@/store/tag';
-import OverflowTip from '../OverflowTip';
 import getCaretCoordinates from 'textarea-caret';
 import { Card } from '../ui/card';
 import classNames from 'classnames';
