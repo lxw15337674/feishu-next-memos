@@ -13,6 +13,9 @@ interface ImageProps {
 }
 
 const UploadImage: React.FC<ImageProps> = ({ alt, src='', onDelete, className, loading }) => {
+    if(!src){
+        return null
+    }
     return (
         <PhotoView src={src}>
             <div className={`relative  rounded-lg overflow-hidden h-full `}>

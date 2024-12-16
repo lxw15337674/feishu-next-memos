@@ -51,7 +51,7 @@
   *,
   ::before,
   ::after {
-    border-color: hsl(var(--border)) !important;
+    border-color: hsl(var(--border));
   }
 }
 /* add the code bellow */ 

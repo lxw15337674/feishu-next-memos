@@ -65,7 +65,7 @@ export const getMemosDataActions = async ({ page_token, filter }: GetMemosDataPa
                 'field_name': "created_time",
                 "desc": true
             }],
-            page_size: 40*3,
+            page_size: 20*3,
             filter
         })
         return data!

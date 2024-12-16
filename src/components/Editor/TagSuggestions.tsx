@@ -139,7 +139,7 @@ const TagSuggestions = ({ editorRef, replaceText }: Props) => {
       className="z-50 p-1 mt-1 -ml-2 fixed max-w-[12rem] gap-px rounded font-mono flex flex-col justify-start items-start overflow-auto shadow"
       style={{ left: position.left, top: position.top + position.height }}
     >
-      {suggestionsRef.current.map((tag, i) => (
+      {suggestionsRef.current.slice(0,20).map((tag, i) => (
         <div
           key={tag}
           onMouseDown={() => autocomplete(tag)}

@@ -55,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <html >
+      <html suppressHydrationWarning>
         <body>
           <CssVarsProvider defaultMode="dark">
             <ThemeProvider
