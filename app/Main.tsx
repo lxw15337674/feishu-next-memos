@@ -10,6 +10,7 @@ import useCountStore from '../src/store/count';
 import { Memo } from '../src/api/type';
 import SimpleMemoView from '../src/components/MemoView/SimpleMemoView';
 import useFilterStore from '../src/store/filter';
+import { shuffleArray } from '../src/utils';
 
 
 export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
@@ -32,7 +33,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     });
     let currentMemos = memos
     if (desc === 'random') {
-        currentMemos = allMemos.slice(0, 300)
+        currentMemos = shuffleArray(allMemos.slice(0, 300))
     }
     return (
         <InfiniteScroll

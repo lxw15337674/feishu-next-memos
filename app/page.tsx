@@ -28,7 +28,7 @@ const getCachedAllMemos = unstable_cache(
 )
 
 export default async function Home() {
-  const allMemos = shuffleArray(await getCachedAllMemos())
+  const allMemos = await getCachedAllMemos()
   return (
     <div className="flex flex-col md:flex-row max-w-[100vw] min-h-screen">
       <MobileHeader />
