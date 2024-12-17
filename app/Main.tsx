@@ -39,7 +39,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
         <InfiniteScroll
             dataLength={memos?.length}
             next={fetchPagedData}
-            hasMore={databases?.has_more ?? false}
+            hasMore={desc !== 'random' && (databases?.has_more ?? false)}
             loader={
                 <p className=" text my-4 text-center text-muted-foreground">
                     <b>Loading...</b>
