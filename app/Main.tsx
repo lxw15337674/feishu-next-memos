@@ -33,7 +33,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     });
     let currentMemos = memos
     if (desc === 'random') {
-        currentMemos = shuffleArray(allMemos.slice(0, 300))
+        currentMemos = allMemos.slice(0, 300)
     }
     return (
         <InfiniteScroll
