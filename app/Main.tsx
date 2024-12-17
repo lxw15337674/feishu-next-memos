@@ -37,7 +37,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     }
     return (
         <InfiniteScroll
-            dataLength={memos?.length}
+            dataLength={currentMemos?.length}
             next={fetchPagedData}
             hasMore={desc !== 'random' && (databases?.has_more ?? false)}
             loader={
@@ -47,7 +47,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
             }
             endMessage={
                 <p className=" text my-4 text-center text-muted-foreground">
-                    <b>---- 已加载 {memos.length} 条笔记 ----</b>
+                    <b>---- 已加载 {currentMemos.length} 条笔记 ----</b>
                 </p>
             }
         >
