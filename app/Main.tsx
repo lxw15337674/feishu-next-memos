@@ -6,9 +6,9 @@ import {  useMount } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
-import useCountStore from '../store/count';
-import { Memo } from '../api/type';
-import SimpleMemoView from '../components/MemoView/SimpleMemoView';
+import useCountStore from '../src/store/count';
+import { Memo } from '../src/api/type';
+import SimpleMemoView from '../src/components/MemoView/SimpleMemoView';
 
 
 export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {

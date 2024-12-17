@@ -2,12 +2,10 @@
 import React from 'react';
 import Editor from '@/components/Editor';
 import { useRequest } from 'ahooks';
-import { createNewMemo } from '../api/larkActions';
-import useMemoStore from '../store/memo';
-import { sleep } from '../utils/promiseQueue';
-import { useToast } from '../components/ui/use-toast';
-import confetti from 'canvas-confetti';
-import { startConfettiAnimation } from '../lib/utils';
+import { createNewMemo } from '../src/api/larkActions';
+import useMemoStore from '../src/store/memo';
+import { useToast } from '../src/components/ui/use-toast';
+import { startConfettiAnimation } from '../src/lib/utils';
 
 const NewMemoEditor: React.FC = () => {
     const { fetchFirstData } = useMemoStore();
@@ -24,7 +22,7 @@ const NewMemoEditor: React.FC = () => {
         }
     })
     return (
-            <Editor onSubmit={createRecord} />
+        <Editor onSubmit={createRecord} />
     );
 };
 

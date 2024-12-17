@@ -5,9 +5,9 @@ import ShareCardDialog from '@/components/ShareCard/ShareCardDialog';
 import LeftSide from '@/components/LeftSide';
 import MemoFilter from '@/components/MemoFilter';
 import { unstable_cache } from 'next/cache';
-import { Memo } from '../api/type';
-import { getRecordsActions } from '../api/larkActions';
-import MobileHeader from '../components/MobileHeader';
+import { Memo } from '../src/api/type';
+import { getRecordsActions } from '../src/api/larkActions';
+import MobileHeader from '../src/components/MobileHeader';
 
 const getCachedAllMemos = unstable_cache(
   async () => {
