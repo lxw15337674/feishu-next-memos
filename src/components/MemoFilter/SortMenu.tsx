@@ -9,28 +9,33 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Icon from '../Icon';
-import useFilterStore, { ImageFilter } from '@/store/filter';
+import useFilterStore from '@/store/filter';
 
-export function FilterDropMenu() {
+export function SortMenu() {
     const {
-        setHasImageFilter,
+        desc,
+        setDesc,
     } = useFilterStore();
     return (
         <DropdownMenu >
             <DropdownMenuTrigger asChild >
                 <Button variant="outline" size="sm">
-                    高级筛选
+                    {
+                        desc === false ? '升序排列' : desc === true ? '降序排列' : '乱序排列'
+                    }
                     <Icon.ChevronDown className="w-4 h-auto ml-1" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent suppressHydrationWarning>
-                <DropdownMenuItem onClick={() => setHasImageFilter(ImageFilter.HAS_IMAGE)}>
-                    仅显示有图片
+                <DropdownMenuItem onClick={() => setDesc('random')}>
+                    乱序排列
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setHasImageFilter(ImageFilter.NO_IMAGE)}>
-                    仅显示没有图片
+                <DropdownMenuItem onClick={() => setDesc(false)}>
+                    时间升序排列
                 </DropdownMenuItem>
-               
+                <DropdownMenuItem onClick={() => setDesc(true)}>
+                    时间降序排列
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );

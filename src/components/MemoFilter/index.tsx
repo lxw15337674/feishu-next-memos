@@ -7,6 +7,7 @@ import useMemoStore from '@/store/memo';
 import { Button } from '../ui/button';
 import { FilterDropMenu } from './FilterDropMenu';
 import FilterTag from './FilterTag';
+import { SortMenu } from './SortMenu';
 
 interface Props {
   className?: string;
@@ -23,15 +24,16 @@ const MemoFilter = (props: Props) => {
     imageFilter,
     textFilter,
     setTextFilter,
-    hasFilter
+    hasFilter,
+    desc
   } = useFilterStore();
   const { fetchInitData } = useMemoStore();
   const { run: debounceFetchData } = useDebounceFn(fetchInitData, {
-    wait: 500,
+    wait: 300,
   });
   useUpdateEffect(() => {
     debounceFetchData();
-  }, [tagFilter, timeFilterText, textFilter, imageFilter]);
+  }, [tagFilter, timeFilterText, textFilter, imageFilter, desc]);
   return (
     <div
       className={classNames(
@@ -39,6 +41,7 @@ const MemoFilter = (props: Props) => {
         props.className,
       )}
     >
+      <SortMenu />
       <FilterDropMenu />
       {
         hasFilter && (<div className="flex justify-start items-center px-2 mr-2   text-gray-400">

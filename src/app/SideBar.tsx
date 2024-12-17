@@ -12,7 +12,6 @@ const SideBar: React.FC = () => {
          w-60 fixed right-0 top-0 "
     >
       <Tools />
-      
     </div>
   );
 };

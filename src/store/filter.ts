@@ -1,4 +1,4 @@
-import { endOfDay, format, startOfDay } from 'date-fns';
+import { format } from 'date-fns';
 import { create } from 'zustand';
 import computed from 'zustand-middleware-computed';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -22,9 +22,11 @@ interface MemoStore {
   setFilter: (tags: string[]) => void;
   removeTagFilter: (tag: string) => void;
   clearFilter: () => void;
+  setDesc: (desc: boolean | 'random') => void;
+  desc: boolean|'random'
+  
 }
 interface ComputedState {
-  // memos: DatabaseObjectResponse[]
   timeFilterText: string;
   filterParams?: object;
   // 是否存在筛选
@@ -43,6 +45,9 @@ const useFilterStore = create(
         setFilter: (tagFilter) => {
           set({ tagFilter });
         },
+        setDesc: (desc) => {
+          set({ desc });
+        },
         setTextFilter: (text) => {
           set({ textFilter: text });
         },
@@ -54,12 +59,14 @@ const useFilterStore = create(
             tagFilter: get().tagFilter.filter((item) => item !== tag),
           });
         },
+        desc: 'random',
         clearFilter: () => {
           set({
             tagFilter: [],
             timeFilter: undefined,
             textFilter: undefined,
-            imageFilter: ImageFilter.NO_FilTER
+            imageFilter: ImageFilter.NO_FilTER,
+            desc: 'random',
           });
         },
       }),

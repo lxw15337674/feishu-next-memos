@@ -21,12 +21,9 @@ export const getRecordsActions = async (config: {
     page_token?: string;
     page_size?: number;
     filter?: Filter;
-    sort?: {
-        field_name: string;
-        desc: boolean;
-    }[]
+    desc?: boolean;
 }) => {
-    const { page_token = undefined, page_size = 200, filter } = config;
+    const { page_token = undefined, page_size = 200, filter, desc=true } = config;
     try {
         const { data } = await client.bitable.appTableRecord.search({
             params: {
@@ -34,10 +31,7 @@ export const getRecordsActions = async (config: {
                 page_token,
             },
             data: {
-                sort: [{
-                    'field_name': "created_time",
-                    "desc": true,
-                }],
+                sort: [{ field_name: 'created_time', desc }],
                 filter,
             },
             path: {
@@ -56,16 +50,14 @@ export const getRecordsActions = async (config: {
 interface GetMemosDataParams {
     page_token?: string;
     filter?: Filter;
+    desc?: boolean;
 }
-export const getMemosDataActions = async ({ page_token, filter }: GetMemosDataParams = {}) => {
+export const getMemosDataActions = async ({ page_token, filter, desc = true }: GetMemosDataParams = {}) => {
     try {
         const data = await getRecordsActions({
             page_token,
-            sort: [{
-                'field_name': "created_time",
-                "desc": true
-            }],
-            page_size: 20*3,
+            desc,
+            page_size: 20 * 3,
             filter
         })
         return data!

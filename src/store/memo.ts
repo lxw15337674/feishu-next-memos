@@ -55,7 +55,9 @@ const useMemoStore = create<MemoStore>()(
         fetchInitData: async () => {
           const databases = await getMemosDataActions({
             filter: useFilterStore.getState().filterParams,
+            desc: !!useFilterStore.getState().desc
           });
+          console.log(databases);
           if (databases) {
             set({
               databases,
@@ -66,10 +68,12 @@ const useMemoStore = create<MemoStore>()(
         // 获取分页数据
         fetchPagedData: async () => {
           const page_token = get().databases.page_token;
+          const sort = useFilterStore.getState().desc;
           if (page_token) {
             const databases = await getMemosDataActions({
               page_token,
               filter: useFilterStore.getState().filterParams,
+              desc: !!sort
             });
             set((state) => {
               state.databases = databases
