@@ -8,6 +8,7 @@ import { unstable_cache } from 'next/cache';
 import { Memo } from '../src/api/type';
 import { getRecordsActions } from '../src/api/larkActions';
 import MobileHeader from '../src/components/MobileHeader';
+import { shuffleArray } from '../src/utils';
 
 const getCachedAllMemos = unstable_cache(
   async () => {
@@ -27,7 +28,7 @@ const getCachedAllMemos = unstable_cache(
 )
 
 export default async function Home() {
-  const allMemos = await getCachedAllMemos()
+  const allMemos = shuffleArray(await getCachedAllMemos())
   return (
     <div className="flex flex-col md:flex-row max-w-[100vw] min-h-screen">
       <MobileHeader />

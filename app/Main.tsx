@@ -2,17 +2,19 @@
 import MemoView from '@/components/MemoView/MemoView';
 import useMemoStore from '@/store/memo';
 import useTagStore from '@/store/tag';
-import {  useMount } from 'ahooks';
+import { useMount } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
 import useCountStore from '../src/store/count';
 import { Memo } from '../src/api/type';
 import SimpleMemoView from '../src/components/MemoView/SimpleMemoView';
+import useFilterStore from '../src/store/filter';
 
 
 export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
+    const { desc } = useFilterStore()
     const { fetchTags } = useTagStore();
     const { setAllMemos } = useCountStore()
     const { validateAccessCode, config } = useConfigStore();
@@ -27,7 +29,11 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
         fetchInitData();
         fetchTags();
         setAllMemos(allMemos);
-    }); 
+    });
+    let currentMemos = memos
+    if (desc === 'random') {
+        currentMemos = allMemos.slice(0, 300)
+    }
     return (
         <InfiniteScroll
             dataLength={memos?.length}
@@ -44,14 +50,13 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
                 </p>
             }
         >
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2'>
-            {memos.map((memo) => (
-                isSimpleMode 
-                    ? <SimpleMemoView key={memo.record_id} id={memo.record_id} {...memo.fields} /> 
-                    : <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
-            ))}
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2'>
+                {currentMemos.map((memo) => (
+                    isSimpleMode
+                        ? <SimpleMemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
+                        : <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
+                ))}
             </div>
-
         </InfiniteScroll>
     );
 }
