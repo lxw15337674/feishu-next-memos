@@ -19,7 +19,7 @@ export function SortMenu() {
     return (
         <DropdownMenu >
             <DropdownMenuTrigger asChild >
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className='text-white'>
                     {
                         desc === false ? '升序排列' : desc === true ? '降序排列' : '乱序排列'
                     }
