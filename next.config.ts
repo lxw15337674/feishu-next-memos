@@ -15,10 +15,13 @@ const nextConfig = withSerwist({
             hmrRefreshes: true,
         },
     },
-      experimental: {
+    experimental: {
         serverActions: {
             bodySizeLimit: '20mb' // Set desired value here
         }
+    },
+    images: {
+        domains: ['internal-api-drive-stream.feishu.cn'],
     }
 })
 

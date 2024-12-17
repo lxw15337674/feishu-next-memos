@@ -1,8 +1,7 @@
 import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Metadata, Viewport } from 'next';
+import { ThemeProvider } from 'next-themes';
 
 const APP_NAME = "Fmemos";
 const APP_DEFAULT_TITLE = "Fmemos";
@@ -56,16 +55,11 @@ export default function RootLayout({
     <>
       <html suppressHydrationWarning>
         <body>
-          <ThemeProvider
-            attribute="class"
+          <ThemeProvider attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
-          >
-            <Toaster />
-            {children}
-
-          </ThemeProvider>
+            >{children}</ThemeProvider>
         </body>
       </html>
     </>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import Icon from './Icon';
 import { PhotoView } from 'react-photo-view';
+import Image from 'next/image';
 
 interface ImageProps {
     alt: string;
@@ -19,10 +20,16 @@ const UploadImage: React.FC<ImageProps> = ({ alt, src='', onDelete, className, l
     return (
         <PhotoView src={src}>
             <div className={`relative  rounded-lg overflow-hidden h-full `}>
-                <img src={src} alt={alt} className={`object-cover rounded-lg   ${loading ? 'opacity-50' : ''} ${className}`}
+                <Image
+                    src={src}
+                    alt={alt}
+                    className={`object-cover rounded-lg ${loading ? 'opacity-50' : ''} ${className}`}
                     onError={(e) => {
-                        e.currentTarget.src = `https://placehold.co/600x400?text=loading`
+                        e.currentTarget.src = `https://placehold.co/600x400?text=loading`;
                     }}
+                    layout="responsive"
+                    width={600}
+                    height={400}
                 />
                 {
                     loading && <div className='absolute inset-0 flex justify-center items-center'>
