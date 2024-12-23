@@ -15,7 +15,7 @@ import { shuffleArray } from '../src/utils';
 
 export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
-    const { desc } = useFilterStore()
+    const { desc, hasFilter } = useFilterStore()
     const { fetchTags } = useTagStore();
     const { setAllMemos } = useCountStore()
     const { validateAccessCode, config } = useConfigStore();
@@ -32,7 +32,7 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
         setAllMemos(allMemos);
     });
     let currentMemos = memos
-    if (desc === 'random') {
+    if (desc === 'random' && !hasFilter) {
         currentMemos = shuffleArray(allMemos.slice(0, 300))
     }
     return (
