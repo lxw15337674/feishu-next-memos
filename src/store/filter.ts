@@ -59,14 +59,14 @@ const useFilterStore = create(
             tagFilter: get().tagFilter.filter((item) => item !== tag),
           });
         },
-        desc: 'random',
+        desc: true,
         clearFilter: () => {
           set({
             tagFilter: [],
             timeFilter: undefined,
             textFilter: undefined,
             imageFilter: ImageFilter.NO_FilTER,
-            desc: 'random',
+            desc: true,
           });
         },
       }),
