@@ -204,6 +204,7 @@ export const uploadImageAction = async (formData: FormData) => {
                 file_name: file.name,
             },
         });
+        console.log(`file_token: ${data?.file_token}`);
         return data?.file_token
     } catch (e) {
         console.error(e);

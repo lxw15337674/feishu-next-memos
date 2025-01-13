@@ -3,12 +3,13 @@
   "version": "1.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "prestart": "next build"
   },
   "dependencies": {
     "@github/relative-time-element": "^4.4.4",

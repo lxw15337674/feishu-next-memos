@@ -17,11 +17,18 @@ const nextConfig = withSerwist({
     },
     experimental: {
         serverActions: {
-            bodySizeLimit: '20mb' // Set desired value here
+            bodySizeLimit: '20mb',
         }
     },
     images: {
-        domains: ['internal-api-drive-stream.feishu.cn'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: '**.feishu.cn',
+                port: '',
+                pathname: '/**',
+            },
+        ],
     }
 })
 
