@@ -84,32 +84,3 @@ export interface NewMemo {
 }
 
 
-// 拆分模式：标签和文本分开。
-export function parseFields(newMemo: NewMemo): Record<string, any> {
-  const { content, fileTokens, link } = newMemo;
-
-  const tags: string[] = [];
-  const textLines: string[] = [];
-
-  content.split('\n').forEach(line => {
-    const parsedLine = parseContent(line);
-    const lineText: string[] = [];
-    
-    parsedLine.forEach(item => {
-      if (item.type === 'tag') {
-        tags.push(item.text.slice(1));
-      } else {
-        lineText.push(item.text);
-      }
-    });
-    
-    textLines.push(lineText.join(''));
-  });
-
-  return {
-    content: textLines.join('\n'),
-    tags,
-    images: fileTokens?.map(file_token => ({ file_token })) ?? [],
-    link: link?.link ? link : undefined
-  };
-}

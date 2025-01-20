@@ -6,18 +6,15 @@ import { useMount } from 'ahooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useRouter } from 'next/navigation';
 import useConfigStore from '@/store/config';
-import useCountStore from '../src/store/count';
-import { Memo } from '../src/api/type';
 import SimpleMemoView from '../src/components/MemoView/SimpleMemoView';
 import useFilterStore from '../src/store/filter';
-import { shuffleArray } from '../src/utils';
+import { PhotoProvider } from 'react-photo-view';
 
 
-export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
+export default function Home() {
     const { memos, fetchInitData, fetchPagedData, databases } = useMemoStore();
-    const { desc, hasFilter } = useFilterStore()
+    const { desc } = useFilterStore()
     const { fetchTags } = useTagStore();
-    const { setAllMemos } = useCountStore()
     const { validateAccessCode, config } = useConfigStore();
     const { isSimpleMode } = config.generalConfig;
     const router = useRouter();
@@ -29,15 +26,12 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
         });
         fetchInitData();
         fetchTags();
-        setAllMemos(allMemos);
     });
-    let currentMemos = memos
-    if (desc === 'random' && !hasFilter) {
-        currentMemos = shuffleArray(allMemos.slice(0, 300))
-    }
     return (
+        <PhotoProvider>
+
         <InfiniteScroll
-            dataLength={currentMemos?.length}
+                dataLength={memos?.length}
             next={fetchPagedData}
             hasMore={desc !== 'random' && (databases?.has_more ?? false)}
             loader={
@@ -47,17 +41,18 @@ export default function Home({ allMemos = [] }: { allMemos: Memo[] }) {
             }
             endMessage={
                 <p className=" text my-4 text-center text-muted-foreground">
-                    <b>---- 已加载 {currentMemos.length} 条笔记 ----</b>
+                    <b>---- 已加载 {memos.length} 条笔记 ----</b>
                 </p>
             }
         >
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2'>
-                {currentMemos.map((memo) => (
+                    {memos.map((memo) => (
                     isSimpleMode
-                        ? <SimpleMemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
-                        : <MemoView key={memo.record_id} id={memo.record_id} {...memo.fields} />
+                        ? <SimpleMemoView {...memo} key={memo.id} />
+                        : <MemoView {...memo} key={memo.id} />
                 ))}
             </div>
         </InfiniteScroll>
+        </PhotoProvider>
     );
 }

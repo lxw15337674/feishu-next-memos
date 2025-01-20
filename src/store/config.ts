@@ -9,6 +9,7 @@ interface CodeConfig {
 interface GeneralConfig {
     // 是否简易模式
     isSimpleMode: boolean;
+    showEditor: boolean;
 }
 interface Config {
     codeConfig: CodeConfig;
@@ -26,6 +27,7 @@ interface SettingStore {
     validateAccessCode: () => Promise<boolean>;
     hasAccessCodePermission: boolean;
     hasEditCodePermission: boolean;
+    setShowEditor: (show: boolean) => void;
 }
 
 const defaultConfig: Config = {
@@ -35,6 +37,7 @@ const defaultConfig: Config = {
     },
     generalConfig: {
         isSimpleMode: false,
+        showEditor: true,
     }
 };
 
@@ -64,6 +67,11 @@ const useConfigStore = create<SettingStore>()(
                     set(state => {
                         callback(state.config)
                     })
+                },
+                setShowEditor: (show) => {
+                    set((state) => {
+                        state.config.generalConfig.showEditor = show;
+                    });
                 },
                 validateAccessCode: async () => {
                     const hasAccessCodePermission = await validateAccessCode(get().config.codeConfig.accessCode)

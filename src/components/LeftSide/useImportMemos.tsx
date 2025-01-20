@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { uploadFile } from "../../utils/file";
 import { toast } from "../ui/use-toast";
-import { createNewMemo } from "../../api/larkActions";
+import { createNewMemo } from "../../api/dbActions";
 
 const useImportMemos = () => {
+    const [loading, setLoading] = useState(false);
     const [memos, setMemos] = useState(0);
     const [importedMemos, setImportedMemos] = useState(0);
-    const [loading, setLoading] = useState(false);
 
     const importData = () => {
         uploadFile({
@@ -53,8 +53,14 @@ const useImportMemos = () => {
                 setLoading(false); // Set loading to false in case of upload errors
             },
         });
-    };
+    }
 
-    return { importData, memos, importedMemos, loading } as const; // Return the loading state as well
-};
+    return {
+        loading,
+        memos,
+        importedMemos,
+        importData
+    }
+}
+
 export default useImportMemos;

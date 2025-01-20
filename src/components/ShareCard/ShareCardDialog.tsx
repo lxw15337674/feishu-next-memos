@@ -22,9 +22,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-// import { getRandomImage } from "@/api/actions";
-import Icon from "../Icon";
-import { getRandomImage } from "@/api/larkActions";
+import { Download } from 'lucide-react';
+import { createApi } from 'unsplash-js';
+import { Random } from 'unsplash-js/dist/methods/photos/types';
 
 const ShardCards = [
     {
@@ -40,7 +40,22 @@ const ShardCards = [
         component: SpotifyCard
     }
 ]
+
 const userName = process.env.USERNAME ?? 'Bhwa233'
+
+const getRandomImage = async () => {
+    const unsplash = createApi({
+        accessKey: process.env.UNSPLASH_ACCESS_CODE!,
+    });
+    const res = await unsplash.photos.getRandom({
+        query: 'wallpapers',
+        orientation: 'landscape',
+    }).catch((e: any) => {
+        console.error(e);
+    });
+    return (res?.response as Random)?.urls?.regular;
+};
+
 const imageDownload = async (card: HTMLDivElement) => {
     if (!card) return;
     try {
@@ -65,7 +80,8 @@ const imageDownload = async (card: HTMLDivElement) => {
 
     }
 };
-const ShareCardDialog = () => {
+
+export function ShareCardDialog() {
     const { text, open, setOpen } = useShareCardStore();
     const { data: url, run, loading } = useRequest(getRandomImage, {
         manual: false
@@ -110,49 +126,38 @@ const ShareCardDialog = () => {
                         </div>
                     </DialogDescription>
                 </DialogHeader>
-                <DialogFooter className="space-y-4 md:space-y-0  md:space-x-2 space-x-0">
-                    <Button variant="destructive"
-                        onClick={() => setOpen(false)} className="w-full md:w-auto">
-                        关闭
-                    </Button>
-                    <Button variant="outline" onClick={() => run()} disabled={loading} className="w-full md:w-auto">
-                        {
-                            loading && <Icon.Loader2 size={20} className="animate-spin " />
-                        }
-                        更换背景图
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <Button
-                                variant="outline"
-                                className="w-full md:w-auto"
-                                disabled={loading}
-                            >
-
-                                下载
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            {
-                                ShardCards.map((item, index) => {
-                                    return <DropdownMenuItem
-                                        key={index}
-                                        className="cursor-pointer"
-                                        onClick={() => imageDownload(refs.current[index])}
+                <DialogFooter>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={run}
+                            disabled={loading}
+                        >
+                            换一张
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button>
+                                    <Download className="mr-2" />
+                                    下载
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                {ShardCards.map((item, index) => (
+                                    <DropdownMenuItem
+                                        key={item.name}
+                                        onClick={() => {
+                                            imageDownload(refs.current[index]);
+                                        }}
                                     >
-                                        下载{item.name}
+                                        {item.name}
                                     </DropdownMenuItem>
-                                }
-                                )
-                            }
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </DialogFooter>
             </DialogContent>
-        </Dialog >
+        </Dialog>
     </>
-};
-
-
-export default ShareCardDialog;
+}

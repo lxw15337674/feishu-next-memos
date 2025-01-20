@@ -24,7 +24,7 @@ const nextConfig = withSerwist({
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: '**.feishu.cn',
+                hostname: 'gallery233.pages.dev',
                 port: '',
                 pathname: '/**',
             },

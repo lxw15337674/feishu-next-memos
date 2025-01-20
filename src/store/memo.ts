@@ -1,17 +1,22 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { getMemoByIdAction, getMemosDataActions } from '../api/larkActions';
-import { Bitable, Memo } from '../api/type';
+import { getMemoByIdAction, getMemosDataActions } from '../api/dbActions';
 import useFilterStore from './filter';
+import { Memo } from '@prisma/client';
+import { Note } from '../api/type';
 
 interface MemoStore {
-  memos: Memo[];
-  databases: Bitable;
+  memos: Note[];
+  databases: {
+    has_more: boolean;
+    items: Note[];
+    total: number;
+  };
   fetchInitData: () => Promise<void>;
   fetchPagedData: () => Promise<void>;
-  removeMemo: (record_id: string) => number;
-  updateMemo: (record_id: string) => void;
+  removeMemo: (id: string) => number;
+  updateMemo: (id: string) => void;
   fetchFirstData: () => Promise<void>;
 }
 
@@ -23,20 +28,19 @@ const useMemoStore = create<MemoStore>()(
         databases: {
           has_more: false,
           items: [],
-          page_token: '',
           total: 0,
         },
         // 删除某条数据
         removeMemo: (pageId: string) => {
-          const index = get().memos.findIndex((item) => item.record_id === pageId);
+          const index = get().memos.findIndex((item) => item.id === pageId);
           set((state) => { state.memos.splice(index, 1) });
           return index;
         },
         // 更新数据
-        updateMemo: (record_id: string) => {
-          getMemoByIdAction(record_id).then((data) => {
+        updateMemo: (id: string) => {
+          getMemoByIdAction(id).then((data) => {
             set((state) => {
-              const index = state.memos.findIndex((item) => item.record_id === record_id);
+              const index = state.memos.findIndex((item) => item.id === id);
               if (index !== -1 && data) {
                 state.memos[index] = data
               }
@@ -53,30 +57,38 @@ const useMemoStore = create<MemoStore>()(
         },
         // 获取初始化数据
         fetchInitData: async () => {
-          const databases = await getMemosDataActions({
+          const response = await getMemosDataActions({
             filter: useFilterStore.getState().filterParams,
             desc: !!useFilterStore.getState().desc
           });
-          console.log(databases);
-          if (databases) {
-            set({
-              databases,
-              memos: databases?.items ?? []
-            })
+          console.log(response);
+          if (response) {
+            const databases = {
+              has_more: false,
+              items: response.items ?? [],
+              total: response.total ?? 0
+            };
+            set((state) => {
+              state.databases = databases;
+              state.memos = databases.items;
+            });
           }
         },
         // 获取分页数据
         fetchPagedData: async () => {
-          const page_token = get().databases.page_token;
           const sort = useFilterStore.getState().desc;
-          if (page_token) {
-            const databases = await getMemosDataActions({
-              page_token,
-              filter: useFilterStore.getState().filterParams,
-              desc: !!sort
-            });
+          const response = await getMemosDataActions({
+            filter: useFilterStore.getState().filterParams,
+            desc: !!sort
+          });
+          if (response) {
+            const databases = {
+              has_more: false,
+              items: response.items ?? [],
+              total: response.total ?? 0
+            };
             set((state) => {
-              state.databases = databases
+              state.databases = databases;
               state.memos.push(...databases.items);
             });
           }

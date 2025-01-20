@@ -2,7 +2,7 @@
 import React from 'react';
 import Editor from '@/components/Editor';
 import { useRequest } from 'ahooks';
-import { createNewMemo } from '../src/api/larkActions';
+import { createNewMemo } from '../src/api/dbActions';
 import useMemoStore from '../src/store/memo';
 import { useToast } from '../src/components/ui/use-toast';
 import { startConfettiAnimation } from '../src/lib/utils';

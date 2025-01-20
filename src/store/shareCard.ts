@@ -7,6 +7,7 @@ interface ShareCardStore {
     open: boolean;
     openShareCord: (text: Content[][]) => void;
     setOpen: (open: boolean) => void;
+    setText: (text: Content[][]) => void;
 }
 
 const useShareCardStore = create<ShareCardStore>()(
@@ -19,6 +20,9 @@ const useShareCardStore = create<ShareCardStore>()(
             },
             setOpen: (open) => {
                 set({ open });
+            },
+            setText: (text) => {
+                set({ text });
             },
         }),
         {

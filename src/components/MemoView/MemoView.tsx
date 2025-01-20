@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import Tag from '../Tag';
 import MemoActionMenu from './MemoActionMenu';
 import { Card } from '@/components/ui/card';
@@ -7,152 +7,164 @@ import { convertGMTDateToLocal, parseContent } from '@/utils/parser';
 import "@github/relative-time-element";
 import Editor from '../Editor';
 import useMemoStore from '@/store/memo';
-import { useMap, useRequest } from 'ahooks';
-import { PhotoProvider } from 'react-photo-view';
+import { useRequest } from 'ahooks';
 import ImageViewer from '../ImageViewer';
-import { ItemFields } from '../../api/type';
-import { getImageUrlAction, updateMemoAction } from '../../api/larkActions';
+import { updateMemoAction } from '../../api/dbActions';
 import Link from 'next/link';
+import { Note } from '../../api/type';
+
+interface MemoContentProps {
+  content: string;
+  isRecentTime: boolean;
+  time: string;
+  createdAt: string;
+}
+
+const MemoContent = React.memo(({ content, isRecentTime, time, createdAt }: MemoContentProps) => (
+  <div className="flex flex-col gap-1">
+    <div className="text-xs text-gray-500">
+      {isRecentTime ? (
+        <time dateTime={createdAt}>
+          {new Date(createdAt).toLocaleString()}
+        </time>
+      ) : time}
+    </div>
+    <div className="text-sm space-y-1">
+      {content.split('\n').map((text, index) => (
+        <p key={index} className="whitespace-pre-wrap break-words leading-6">
+          {parseContent(text).map((subItem, subIndex) => (
+            subItem.type !== 'tag' && <span key={subItem.text + subIndex}>{subItem.text}</span>
+          ))}
+        </p>
+      ))}
+    </div>
+  </div>
+));
 
 const MemoView = ({
-  tags = [],
+  tags,
   content,
-  last_edited_time,
-  created_time,
-  id,
   images = [],
-  link
-}: ItemFields & { id: string }) => {
+  link,
+  createdAt,
+  updatedAt,
+  id,
+}: Note) => {
   const [isEdited, setIsEdited] = useState(false);
-  const [urlMap, urlMapActions] = useMap<string, string>()
+  const [isLoading, setIsLoading] = useState(false);
+
   const time = useMemo(() => {
-    return last_edited_time ? convertGMTDateToLocal(new Date(last_edited_time)) : ' ';
-  }, [last_edited_time]);
+    return updatedAt ? convertGMTDateToLocal(updatedAt) : ' ';
+  }, [updatedAt]);
+
   const { updateMemo } = useMemoStore();
+
   const { runAsync: updateRecord } = useRequest(updateMemoAction, {
     manual: true,
     onSuccess: (id) => {
       if (id) {
-        updateMemo(id)
-        setIsEdited(false)
+        updateMemo(id);
+        setIsEdited(false);
       }
     }
-  })
-  const isRecentTime = useMemo(() => {
-    return created_time ? Date.now() - new Date(created_time).getTime() < 1000 * 60 * 60 * 24 : false;
-  }, [created_time])
+  });
 
-  const memoContentText = useMemo(() => {
-    return content?.map?.(
-      (item) => item.text,
-    ) as string[]
-  }, [
-    content
-  ])
-  useEffect(() => {
-    const maxBatchSize = 5; // 每次请求的最大数量
-    const fetchImageUrls = async () => {
-      for (let i = 0; i < images.length; i += maxBatchSize) {
-        const batchImages = images.slice(i, i + maxBatchSize);
-        const data = await getImageUrlAction(batchImages.map(item => item.file_token));
-        data?.forEach((item) => {
-          urlMapActions.set(item.file_token, item.tmp_download_url)
-        })
-      }
-    };
-    fetchImageUrls();
-  }, [images]);
-  const parsedContent = useMemo(() => {
-    return memoContentText?.map((item) => {
-      return parseContent(item)
-    })
-  }, [memoContentText])
+  const isRecentTime = useMemo(() => {
+    return createdAt ? Date.now() - new Date(createdAt).getTime() < 1000 * 60 * 60 * 24 : false;
+  }, [createdAt]);
+
+  const handleEdit = useCallback(() => setIsEdited(true), []);
+  const handleCancel = useCallback(() => setIsEdited(false), []);
+
+  const handleSubmit = useCallback(async (memo: any) => {
+    setIsLoading(true);
+    try {
+      await updateRecord(id, memo);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, updateRecord]);
+
   if (isEdited) {
-    return (
-      <Editor onSubmit={(memo) => updateRecord(id, memo)} defaultValue={memoContentText.join('\n')}
-        defaultImages={images.map(item => ({ ...item, url: urlMap.get(item.file_token)! }))}
-        onCancel={() => setIsEdited(false)}
-        defaultLink={link}
-      />
-    );
+    return <Editor
+      defaultValue={content}
+      defaultImages={images}
+      defaultLink={link}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+    />
   }
+
   return (
-    <Card className="px-2 py-2 rounded overflow-hidden w-full flex flex-col">
-      <div className="flex justify-between items-center text-sm text-gray-500">
-        <div>
-          {time}
-          {isRecentTime &&
-            <span className='ml-2'>
-              {created_time && (
-                // @ts-ignore
-                <relative-time datetime={new Date(created_time).toISOString()} tense="past" />
-              )}
-            </span>
-          }
+    <Card className={`p-3 relative ${isLoading ? 'opacity-70' : ''}`}>
+      <div className="flex justify-between items-start">
+        <div className="flex-1 min-w-0 mr-2">
+          <MemoContent
+            content={content}
+            isRecentTime={isRecentTime}
+            time={time}
+            createdAt={createdAt as unknown as string}
+          />
         </div>
-        <MemoActionMenu parsedContent={parsedContent} memoId={id} onEdit={() => setIsEdited(true)} />
+        <MemoActionMenu
+          memoId={id}
+          onEdit={handleEdit}
+          parsedContent={content.split('\n').map(text => parseContent(text))}
+        />
       </div>
-      <div className="font-medium mb-2  flex-1">
-        {parsedContent?.map((item, index) => (
-          <p key={index} className="whitespace-pre-wrap break-words w-full leading-6 text-sm">
-            {
-              item.map((item, index) => {
-                if (item.type === 'tag') {
-                  return <Tag
-                    className="bg-blue-100 text-blue-800 font-medium mx-[1px] px-1 py-0.5  rounded dark:bg-blue-900 dark:text-blue-300 "
-                    text={item.text.slice(1)}
-                    key={item.text + index}
-                  >
-                    {item.text}
-                  </Tag>
-                }
-                return <span key={item.text + index}>{item.text}</span>
-              })
-            }
-          </p>
-        ))}
-      </div>
-      {images.length > 0 &&
-        <div className="flex flex-wrap gap-2  mb-2">
-          <PhotoProvider
-            brokenElement={<div className="w-[164px] h-[164px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
+
+      {images.length > 0 && (
+        <div className={`grid auto-rows-fr gap-2 mt-2 ${images.length === 1 ? 'grid-cols-1' :
+          images.length === 2 ? 'grid-cols-2' :
+            images.length === 3 ? 'grid-cols-2 md:grid-cols-3' :
+              images.length === 4 ? 'grid-cols-2' :
+                'grid-cols-2 md:grid-cols-3'
+          }`}>
+          {images.map((image, index) => (
+            <div
+              key={image}
+              className={`relative ${images.length === 3 && index === 0 ? 'md:col-span-2' :
+                images.length === 4 && index === 0 ? 'col-span-2' :
+                  ''
+                } aspect-square w-full`}
+            >
+              <ImageViewer
+                src={image}
+                alt={image}
+                className="absolute inset-0 w-full h-full object-cover rounded"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {link?.url && (
+        <div className='mt-3'>
+          <Link
+            href={link.url}
+            target="_blank"
+            rel="noreferrer"
+            title={link.text || link.url}
+            className="text-blue-500 hover:text-blue-600 hover:underline truncate block text-sm transition-colors"
           >
-            {
-              images.length === 1 ? <ImageViewer alt={images[0].file_token} src={urlMap.get(images[0].file_token)!}
-                className="max-h-[40vh]" /> : images?.map((image) => (
-                  <ImageViewer
-                    key={image.file_token}
-                    src={urlMap.get(image.file_token)!}
-                    alt={image.file_token}
-                    className="h-[164px] w-[164px]"
-                  />
-                ))
-            }
-          </PhotoProvider>
-        </div>
-      }
-      {
-        link?.link && <div className='mb-2'>
-          <Link href={link.link} target="_blank" rel="noreferrer"
-            title={link.text || link.link}
-            className="text-blue-500 hover:underline truncate w-full inline-block">
-            {link.text || link.link}
+            {link.text || link.url}
           </Link>
         </div>
-      }
-      {
-        tags.length > 0 && <div className='mb-2 '>
-          {tags?.map((label) => (
+      )}
+
+      {tags.length > 0 && (
+        <div className='flex flex-wrap gap-1.5 mt-3'>
+          {tags.map((tag) => (
             <Tag
-              className="bg-blue-100 text-blue-800 font-medium me-0.5 px-1 py-0.5  rounded dark:bg-blue-900 dark:text-blue-300 "
-              text={label}
-              key={label}
+              key={tag.id}
+              className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-md hover:bg-blue-100 transition-colors dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+              text={tag.name}
             >
-              #{label}
+              #{tag.name}
             </Tag>
           ))}
         </div>
-      }
+      )}
     </Card>
   );
 };

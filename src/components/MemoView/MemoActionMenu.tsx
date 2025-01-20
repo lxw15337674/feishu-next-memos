@@ -12,7 +12,7 @@ import { Button } from '../ui/button';
 import { Content } from '@/utils/parser';
 import useShareCardStore from '@/store/shareCard';
 import useConfigStore from '@/store/config';
-import { deleteMemo } from '../../api/larkActions';
+import { deleteMemo } from '../../api/dbActions';
 
 interface Props {
   memoId: string;
@@ -20,63 +20,58 @@ interface Props {
   parsedContent: Content[][]
 }
 
-const MemoActionMenu = (props: Props) => {
-  const { memoId, onEdit, parsedContent } = props;
-  const { openShareCord } = useShareCardStore()
-  const { hasEditCodePermission } = useConfigStore()
+const MemoActionMenu = ({ memoId, onEdit, parsedContent }: Props) => {
   const { toast } = useToast();
   const { removeMemo } = useMemoStore();
-  const handleDeleteMemoClick = async () => {
-    await deleteMemo(memoId);
-    removeMemo(memoId);
-    toast({
-      title: '已删除',
-      description: '已成功删除该条笔记',
-    });
-  };
-  const handleEditMemoClick = () => {
-    onEdit?.()
-  }
-  return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button
-            variant="ghost"
-            size="icon"
-          >
-            <Icon.MoreVertical
-              className="w-4 h-4 mx-auto text-gray-500 dark:text-gray-400"
-            />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => openShareCord(parsedContent)}
-          >
-            生成分享图
-          </DropdownMenuItem>
-          {
-            hasEditCodePermission && <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={handleEditMemoClick}
-              >
-                编辑
-              </DropdownMenuItem>
+  const { setOpen, setText } = useShareCardStore();
+  const { setShowEditor } = useConfigStore();
 
-              <DropdownMenuItem
-                className="cursor-pointer text-red-500 dark:text-red-400"
-                onClick={handleDeleteMemoClick}
-              >
-                删除
-              </DropdownMenuItem></>
-          }
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+  const handleDelete = async () => {
+    try {
+      await deleteMemo(memoId);
+      removeMemo(memoId);
+      toast({
+        title: "删除成功",
+        duration: 1000
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "删除失败",
+        description: "请重试",
+        duration: 1000
+      });
+    }
+  };
+
+  const handleShare = () => {
+    setText(parsedContent);
+    setOpen(true);
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="px-2">
+          <Icon.MoreVertical size={20} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onClick={onEdit}>
+          <Icon.Edit2 className="mr-2" size={16} />
+          编辑
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleShare}>
+          <Icon.Share className="mr-2" size={16} />
+          分享
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+          <Icon.Trash className="mr-2" size={16} />
+          删除
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

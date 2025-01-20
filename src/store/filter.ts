@@ -108,10 +108,7 @@ const useFilterStore = create(
             state.timeFilter && {
               "field_name": "created_time",
               "operator": "is",
-              "value": [
-                "ExactDate",
-                format(state.timeFilter, 'T')
-              ]
+              "value": [state.timeFilter]
             }
           ].filter(Boolean) as Filter['conditions'];
           return conditions?.length ?? 0 > 0 ? {

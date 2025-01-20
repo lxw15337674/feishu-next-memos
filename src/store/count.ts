@@ -26,7 +26,7 @@ const useCountStore = create(
                 return state.allMemos.reduce((acc, memo) => {
                     if (!memo.fields.created_time) return acc;
                     const day = format(memo.fields.created_time, 'yyyy/MM/dd');
-                    acc.set(day, (acc.get(day) || []).concat(memo.record_id));
+                    acc.set(day, (acc.get(day) || []).concat(memo.id));
                     return acc;
                 }, new Map<string, string[]>());
             },

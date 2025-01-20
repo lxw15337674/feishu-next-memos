@@ -3,80 +3,58 @@ import React, { useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { convertGMTDateToLocal, parseContent } from '@/utils/parser';
 import { useMap } from 'ahooks';
-import { PhotoProvider } from 'react-photo-view';
-import ImageViewer from '../ImageViewer';
-import { ItemFields } from '../../api/type';
-import { getImageUrlAction } from '../../api/larkActions';
+import { Note } from '../../api/type';
 
-const MemoView = ({
+interface SimpleMemoViewProps extends Note {
+    id: string;
+}
+
+interface ParsedItem {
+    type: string;
+    text: string;
+}
+
+const SimpleMemoView: React.FC<SimpleMemoViewProps> = ({
     content,
     images = [],
     link,
-    created_time
-}: ItemFields & { id: string }) => {
-    const [urlMap, urlMapActions] = useMap<string, string>()
+    createdAt
+}) => {
+    const [urlMap, urlMapActions] = useMap<string, string>();
     
     useEffect(() => {
-        const maxBatchSize = 5; // 每次请求的最大数量
         const fetchImageUrls = async () => {
-            for (let i = 0; i < images.length; i += maxBatchSize) {
-                const batchImages = images.slice(i, i + maxBatchSize);
-                const data = await getImageUrlAction(batchImages.map(item => item.file_token));
-                data?.forEach((item) => {
-                    urlMapActions.set(item.file_token, item.tmp_download_url)
-                })
-            }
+            images.forEach((fileToken: string) => {
+                urlMapActions.set(fileToken, `/api/images/${fileToken}`);
+            });
         };
         fetchImageUrls();
-    }, [images]);
+    }, [images, urlMapActions]);
+
     const parsedContent = useMemo(() => {
-        return content?.map((item) => parseContent(item.text))
-    }, [content])
+        return parseContent(content);
+    }, [content]);
 
     const localTime = useMemo(() => {
-        return created_time ? convertGMTDateToLocal(new Date(created_time)) : null;
-    }, [created_time]);
+        return createdAt ? convertGMTDateToLocal(new Date(createdAt)) : null;
+    }, [createdAt]);
 
     return (
         <Card className="px-2 py-1 rounded overflow-hidden w-full">
             <div className="font-medium">
-                {parsedContent?.map((item, index) => (
-                    <p key={index} className="whitespace-pre-wrap break-words w-full leading-5 text-sm">
-                        {item.map((subItem, subIndex) => (
-                            subItem.type !== 'tag' && <span key={subItem.text + subIndex}>{subItem.text}</span>
-                        ))}
-                        {index === parsedContent.length - 1 && (
-                            <span className="text-xs text-gray-500 ml-2">
-                                {localTime}
-                            </span>
-                        )}
-                    </p>
-                ))}
+                <p className="whitespace-pre-wrap break-words w-full leading-5 text-sm">
+                    {parsedContent.map((subItem: ParsedItem, subIndex: number) => (
+                        subItem.type !== 'tag' && <span key={subItem.text + subIndex}>{subItem.text}</span>
+                    ))}
+                    <span className="text-xs text-gray-500 ml-2">
+                        {localTime}
+                    </span>
+                </p>
             </div>
-            {images.length > 0 &&
-                <div className="flex flex-wrap gap-1 mt-1">
-                    <PhotoProvider
-                        brokenElement={<div className="w-[120px] h-[120px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
-                    >
-                        {images.length === 1 
-                            ? <ImageViewer alt={images[0].file_token} src={urlMap.get(images[0].file_token)!}
-                                className="max-h-[30vh]" /> 
-                            : images?.map((image) => (
-                                <ImageViewer
-                                    key={image.file_token}
-                                    src={urlMap.get(image.file_token)!}
-                                    alt={image.file_token}
-                                    className="h-[120px] w-[120px]"
-                                />
-                            ))
-                        }
-                    </PhotoProvider>
-                </div>
-            }
-            {link?.link && 
+            {link?.url && 
                 <div className='mt-1'>
-                    <a href={link.link} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline text-sm">
-                        {link.text || link.link}
+                    <a href={link.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline text-sm">
+                        {link.text || link.url}
                     </a>
                 </div>
             }
@@ -84,4 +62,4 @@ const MemoView = ({
     );
 };
 
-export default MemoView;
+export default SimpleMemoView;

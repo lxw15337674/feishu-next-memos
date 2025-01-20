@@ -1,47 +1,6 @@
-interface ItemFields {
-  content: {
-    text: string;
-    type: string;
-    link?: string;
-  }[];
-  images?: ImageType[],
-  tags: string[];
-  "created_time"?: number;
-  "last_edited_time"?: number;
-  link?: LinkType
-}
-interface ImageType {
-  file_token: string;
-  name: string;
-  size: number;
-  type: string;
-  url?: string;
-}
-
-export interface LinkType {
-  link: string;
-  text?: string;
-}
-export interface newMemo {
-  content: string;
-  images?: {
-    file_token: string;
-  }[],
-  tags?: string[];
-}
-
-interface Memo {
-  fields: ItemFields;
-  record_id: string;
-}
-
-interface Bitable {
-  has_more: boolean;
-  items: Memo[];
-  page_token: string;
-  total: number;
-}
-
+import { Memo } from "@prisma/client";
+import { Tag } from "@prisma/client";
+import { Link } from "@prisma/client";
 
 interface Filter {
   conjunction?: "and" | "or";
@@ -60,4 +19,11 @@ interface Filter {
   }>;
 };
 
-export type { Bitable, Memo, ItemFields, Filter, ImageType };
+
+
+type Note = Memo & {
+  tags: Tag[];
+  link: Link;
+}
+
+export type { Filter, Note };

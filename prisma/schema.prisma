@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Memo {
+  id            String      @id @default(cuid())
+  content       String
+  tags          Tag[]
+  images        String[]
+  link          Link?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  @@map("memos")
+}
+
+model Link {
+  id            String      @id @default(cuid())
+  url           String      @map("link")
+  text          String?
+  memoId        String      @unique @map("memo_id")
+  memo          Memo        @relation(fields: [memoId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  @@map("links")
+}
+
+model Tag {
+  id            String      @id @default(cuid())
+  name          String      @unique
+  memos         Memo[]     
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@map("tags")
+}

@@ -6,23 +6,28 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Icon from '../Icon'
-import { LinkType } from '../../api/type'
 import { ExternalLinkIcon } from 'lucide-react'
 import { fetchTitle } from '../../api/requestActions'
-
+export interface LinkType {
+    url: string;
+    text: string | null;
+    id?: string;
+    memoId?: string;
+    createdAt?: Date;
+}
 interface Props {
-    link: LinkType
-    setLink: (link: LinkType) => void
+    link: LinkType | undefined
+    setLink: (link: LinkType | undefined) => void
 }
 
 export default function LinkAction({ link, setLink }: Props) {
     const [isOpen, setIsOpen] = useState(false)
-    const [url, setUrl] = useState(link?.link ?? '')
+    const [url, setUrl] = useState(link?.url ?? '')
     const [text, setText] = useState(link?.text ?? '')
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        setUrl(link?.link ?? '')
+        setUrl(link?.url ?? '')
         setText(link?.text ?? '')
     }, [link])
 
@@ -30,7 +35,7 @@ export default function LinkAction({ link, setLink }: Props) {
         setLoading(true)
         setIsOpen(false)
         const title = await fetchTitle(url)
-        setLink({ link: url, text: text || title })
+        setLink({ url, text: text || title })
         setLoading(false)
     }
 
@@ -47,11 +52,11 @@ export default function LinkAction({ link, setLink }: Props) {
         <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon"
-                    className={`${link.link ? 'text-blue-800 dark:text-blue-400' : ''} px-2 w-auto md:max-w-[10vw] max-w-[30vw]`}>
+                    className={`${link?.url ? 'text-blue-800 dark:text-blue-400' : ''} px-2 w-auto md:max-w-[10vw] max-w-[30vw]`}>
                     {
                         loading ? (
                             <Icon.Loader2 className="animate-spin" size={20} />
-                        ) : link.link ? (
+                        ) : link?.url ? (
                             <div className="inline-block truncate " title={text}>
                                 {text}
                             </div>

@@ -8,31 +8,49 @@ import { useDebounceFn, useEventListener, useKeyPress } from 'ahooks';
 import { useFileUpload } from './useFileUpload';
 import ImageViewer from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
-import { ImageType, LinkType } from '../../api/type';
-import LinkAction from './LinkAction';
+import LinkAction, { LinkType } from './LinkAction';
 import { NewMemo } from '../../utils/parser';
 import { AutosizeTextarea } from '../ui/AutosizeTextarea';
+import { LucideIcon } from 'lucide-react';
+import { Link } from '@prisma/client';
 
 interface Props {
   onSubmit: (memo: NewMemo) => Promise<any>;
   onCancel?: () => void;
   defaultValue?: string;
-  defaultImages?: ImageType[];
-  defaultLink?: LinkType;
+  defaultImages?: string[];
+  defaultLink?: Link;
 }
 export interface ReplaceTextFunction {
   (text: string, start: number, end: number, cursorOffset?: number): void
 }
 
-const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink = {
-  link: '',
-  text: ''
-} }: Props) => {
+interface ToolbarButtonProps {
+  icon: LucideIcon;
+  title: string;
+  onClick: () => void;
+  disabled?: boolean;
+}
+
+// Extract toolbar buttons into a separate component
+const ToolbarButton = ({ icon: Icon, title, onClick, disabled = false }: ToolbarButtonProps) => (
+  <Button
+    variant="ghost"
+    size="icon"
+    title={title}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    <Icon size={20} />
+  </Button>
+);
+
+const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink }: Props) => {
   const { fetchTags } = useTagStore();
   const [loading, setLoading] = React.useState(false);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
   const { files, uploadFile, removeFile, isUploading, reset, pushFile } = useFileUpload(defaultImages)
-  const [link, setLink] = useState<LinkType>(defaultLink)
+  const [link, setLink] = useState<LinkType | undefined>(defaultLink)
   const { run: replaceText } = useDebounceFn<ReplaceTextFunction>((text, start, end, offset = 0) => {
     const editor = editorRef;
     if (editor) {
@@ -57,11 +75,11 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink =
     }
     const content = editor.value ?? '';
     if (content.trim().length === 0) return;
-    setLoading(true);
+    setLoading(true); 
     await onSubmit?.(
       {
         content,
-        fileTokens: files?.map(item => item.file_token!),
+        fileTokens: files?.map(item => item.source),
         link
       }).finally(() => {
         setLoading(false);
@@ -69,10 +87,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink =
     fetchTags()
     editor!.value = '';
     reset()
-    setLink({
-      link: '',
-      text: ''
-    })
+    setLink(undefined)
   };
   useKeyPress('ctrl.enter', (e) => {
     // 判断是否focus
@@ -97,111 +112,86 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink =
   })
   const isLoading = loading || isUploading
   return (
-    <div className={`relative w-auto overflow-x-hidden h-full border bg-background  ${isFocused ? 'border-blue-500' : ''} `}>
-      <AutosizeTextarea
-        className='resize-none border-none text-base'
-        placeholder="此刻的想法..."
-        autoFocus
-        defaultValue={defaultValue}
-        ref={(ref) => setEditorRef(ref?.textArea ?? null)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-      />
-      <div className='flex px-2'>
-        <div className='w-full'>
+    <div className={`relative w-auto overflow-x-hidden h-full border bg-background rounded-md transition-colors duration-200 ${isFocused ? 'border-blue-500' : 'border-input'}`}>
+      <div className="flex flex-col h-full">
+        <AutosizeTextarea
+          className='resize-none border-none text-base p-3 min-h-[120px] '
+          placeholder="此刻的想法..."
+          autoFocus
+          defaultValue={defaultValue}
+          ref={(ref) => setEditorRef(ref?.textArea ?? null)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+        />
+
+        <div className='px-3'>
           <PhotoProvider
             brokenElement={<div className="w-[164px] h-[164px] bg-gray-200 text-gray-400 flex justify-center items-center">图片加载失败</div>}
           >
-            <div className='flex space-x-1 pb-2'>
-              {
-                files?.map((file, index) => {
-                  return <ImageViewer
-                    key={file.source}
-                    src={file.source}
-                    loading={file.loading}
-                    alt='file'
-                    className='h-[100px] w-[100px]'
-                    onDelete={() => {
-                      removeFile(index)
-                    }} />
-                })
-              }
+            <div className='flex flex-wrap gap-2 pb-2'>
+              {files?.map((file, index) => (
+                <ImageViewer
+                  key={file.source}
+                  src={file.source}
+                  loading={file.loading}
+                  alt='file'
+                  className='h-[100px] w-[100px] object-cover rounded-md'
+                  onDelete={() => removeFile(index)}
+                />
+              ))}
             </div>
           </PhotoProvider>
-          <div
-            className='flex border-t py-2'
-          >
-            <Button
-              variant="ghost"
-              size="icon"
-              title='粘贴剪切板内容'
-              onClick={() => {
-                if (!editorRef) {
-                  return
-                }
-                editorRef.focus()
-                navigator.clipboard.readText().then(text => {
-                  replaceText(text, editorRef?.selectionStart, editorRef?.selectionStart, 0)
-                })
-              }
-              }
-            >
-              <Icon.ClipboardPaste size={20} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              title='插入标签'
-              onClick={() => {
-                if (!editorRef) {
-                  return
-                }
-                replaceText('#', editorRef?.selectionStart, editorRef?.selectionStart, 0)
-              }
-              }
-            >
-              <Icon.Hash size={20} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              title='插入图片，最大9张，单张最大20MB'
-              onClick={() => {
-                if (!editorRef) {
-                  return
-                }
-                uploadFile()
-              }
-              }
-            >
-              <Icon.Paperclip size={20} />
-            </Button>
-            <LinkAction link={link} setLink={setLink} />
-            <div className="flex items-center ml-auto">
-              {onCancel && <Button
-                disabled={loading}
-                variant="ghost"
-                size='icon'
-                onClick={onCancel}
-                className="w-16 h-8"
-              >
-                取消
-              </Button>
-              }
+
+          <div className='flex items-center border-t py-2 gap-1'>
+            <div className="flex items-center gap-1">
+              <ToolbarButton
+                icon={Icon.ClipboardPaste}
+                title='粘贴剪切板内容'
+                onClick={() => {
+                  if (!editorRef) return;
+                  editorRef.focus();
+                  navigator.clipboard.readText().then(text => {
+                    replaceText(text, editorRef?.selectionStart, editorRef?.selectionStart, 0);
+                  });
+                }}
+              />
+              <ToolbarButton
+                icon={Icon.Paperclip}
+                title='插入图片，最大9张，单张最大20MB'
+                onClick={() => {
+                  if (!editorRef) return;
+                  uploadFile();
+                }}
+                disabled={files?.length >= 9}
+              />
+              <LinkAction link={link} setLink={setLink} />
+            </div>
+
+            <div className="flex items-center gap-2 ml-auto">
+              {onCancel && (
+                <Button
+                  disabled={loading}
+                  variant="ghost"
+                  onClick={onCancel}
+                  className="px-4"
+                >
+                  取消
+                </Button>
+              )}
               <Button
                 disabled={isLoading}
                 variant="outline"
-                size="icon"
-                type='submit'
                 onClick={onSave}
-                className="ml-4 w-16 h-8"
+                className="px-4"
               >
-                {
-                  isLoading ? <Icon.Loader2 size={20} className="animate-spin" /> : <Icon.Send size={20} />
-                }
+                {isLoading ? (
+                  <Icon.Loader2 size={20} className="animate-spin mr-2" />
+                ) : (
+                  <Icon.Send size={20} className="mr-2" />
+                )}
+                发送
               </Button>
             </div>
-
           </div>
         </div>
       </div>
