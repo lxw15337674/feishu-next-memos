@@ -207,7 +207,10 @@ function buildWhereClause(filter: Filter) {
     return where;
 }
 
-
+export const getTagsAction = async () => {
+    const tags = await prisma.tag.findMany();
+    return tags;
+};
 
 export const getTagsWithCountAction = async () => {
     const tagsWithCount = await prisma.tag.findMany({

@@ -49,7 +49,6 @@ const ActivityCalendar: React.FC = () => {
           const dateTime = format(date, 'yyyy/MM/dd');
           const memosByDay = dailyStats?.find(item => item.date === dateTime);
           const length = memosByDay?.count ?? 0;
-          console.log(length);
           return (
             <td
               className={`${classNames.cell} ${remarkedColor(length)}`}
