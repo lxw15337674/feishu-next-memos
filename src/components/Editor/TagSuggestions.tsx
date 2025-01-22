@@ -127,7 +127,6 @@ const TagSuggestions = ({ editorRef: editor, replaceText }: Props) => {
   useEventListener('blur', hide, { target: editor });
 
   if (!isVisible || typeof document === 'undefined') return null;
-  console.log('isVisible', isVisible, position)
   return createPortal(
     <Card
       className="z-50 p-1 mt-1 -ml-2 fixed max-w-[12rem] max-h-[300px] gap-px rounded font-mono flex flex-col justify-start items-start overflow-auto shadow"

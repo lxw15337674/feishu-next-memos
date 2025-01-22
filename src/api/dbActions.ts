@@ -16,7 +16,7 @@ export const getRecordsActions = async (config: {
     try {
         const where = filter ? buildWhereClause(filter) : {};
 
-        let [items, total] = await Promise.all([
+        const [items, total] = await Promise.all([
             prisma.memo.findMany({
                 take: page_size,
                 where,
@@ -30,11 +30,9 @@ export const getRecordsActions = async (config: {
             }),
             prisma.memo.count({ where })
         ]);
-        if (desc === Desc.RANDOM) {
-            items = items.sort(() => Math.random() - 0.5);
-        }
+        const sortedItems = desc === Desc.RANDOM ? items.sort(() => Math.random() - 0.5) : items;
         return {
-            items: items as Note[],
+            items: sortedItems as Note[],
             total,
         }
     } catch (error) {
