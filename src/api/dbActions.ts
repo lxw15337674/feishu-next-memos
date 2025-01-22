@@ -60,12 +60,19 @@ export const getMemosDataActions = async ({ filter, desc = Desc.DESC }: {
 
 export const createNewMemo = async (newMemo: NewMemo) => {
     try {
-        const { content, fileTokens, link } = newMemo;
-        const tagNames = await generateTags(content);
+        const { content, images, link, created_time, last_edited_time, tags } = newMemo;
+        let tagNames: string[]
+        if (tags && tags.length > 0) {
+            tagNames = tags;
+        } else {
+            tagNames = await generateTags(content);
+        }
         const memo = await prisma.memo.create({
             data: {
                 content,
-                images: fileTokens || [],
+                images: images || [],
+                createdAt: created_time ? new Date(created_time) : new Date(),
+                updatedAt: last_edited_time ? new Date(last_edited_time) : new Date(),
                 tags: {
                     connectOrCreate: tagNames.map((name: string) => ({
                         where: { name },
@@ -120,7 +127,7 @@ export const getMemoByIdAction = async (id: string) => {
 
 export const updateMemoAction = async (id: string, newMemo: NewMemo) => {
     try {
-        const { content, fileTokens, link } = newMemo;
+        const { content, images, link } = newMemo;
         const tagNames = await generateTags(content);
 
         // Update memo with new data in a transaction
@@ -133,7 +140,7 @@ export const updateMemoAction = async (id: string, newMemo: NewMemo) => {
                 where: { id },
                 data: {
                     content,
-                    images: fileTokens || [],
+                    images: images || [],
                     tags: {
                         set: [], // First disconnect all existing tags
                         connectOrCreate: tagNames.map((name: string) => ({
@@ -267,5 +274,17 @@ export const getCountAction = async (): Promise<MemosCount> => {
     } catch (error) {
         console.error("获取按日期分组的备忘录失败:", error);
         throw new Error("获取备忘录数据失败");
+    }
+};
+
+export const clearAllDataAction = async () => {
+    try {
+        await prisma.memo.deleteMany({});
+        await prisma.tag.deleteMany({});
+        await prisma.link.deleteMany({});
+        return { success: true };
+    } catch (error) {
+        console.error("清空数据失败:", error);
+        throw error;
     }
 };

@@ -23,6 +23,19 @@ import { downloadFile, uploadFile } from '../../utils/file';
 import { parseMastodonData } from '../../utils/importData';
 import useImportMemos from './useImportMemos';
 import Icon from '../Icon';
+import { clearAllDataAction } from '@/api/dbActions';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 export function Setting() {
     const { config, setConfig, resetGeneralConfig, setEditCodePermission } = useConfigStore()
     const { toast } = useToast()
@@ -93,6 +106,25 @@ export function Setting() {
             },
         })
     }
+
+    const handleClearData = async () => {
+        try {
+            await clearAllDataAction();
+            toast({
+                title: "清空成功",
+                description: "所有数据已被清空",
+                duration: 2000
+            });
+            router.refresh();
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "清空失败",
+                description: "操作过程中出现错误",
+                duration: 2000
+            });
+        }
+    };
 
     return (
         <Dialog>
@@ -168,33 +200,82 @@ export function Setting() {
                     </Button>
                     <Separator className="my-4" />
 
-                    <div className="space-y-2">
-                        <Label className="flex flex-col space-y-1 ">
-                            <span>
-                                格式化Mastodon数据
-                            </span>
-                            <span className="text-xs font-normal leading-snug text-muted-foreground">
-                                上传从Mastodon导出的JSON文件，将其格式化为支持导入的JSON文件
+                    <div className="space-y-4">
+                        <Label className="flex flex-col space-y-1">
+                            <span className="text-lg font-semibold">
+                                数据导入
                             </span>
                         </Label>
+
+                        <div className="space-y-2">
+                            <Label className="flex flex-col space-y-1">
+                                <span>
+                                    从Excel导入
+                                </span>
+                                <span className="text-xs font-normal leading-snug text-muted-foreground">
+                                    支持.xlsx或.xls格式，表格需包含content列，可选tags、images、created_time、last_edited_time、link列
+                                </span>
+                            </Label>
+                            <Button type="submit" className="w-full" onClick={importData} disabled={loading}>
+                                {
+                                    loading ? (<><Icon.Loader2 size={20} className="animate-spin mr-1" />{`已上传${importedMemos}/${memos}条数据`}</>) : '导入Excel文件'
+                                }
+                            </Button>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="flex flex-col space-y-1">
+                                <span>
+                                    从Mastodon导入
+                                </span>
+                                <span className="text-xs font-normal leading-snug text-muted-foreground">
+                                    上传从Mastodon导出的JSON文件，将其格式化为支持导入的JSON文件
+                                </span>
+                            </Label>
+                            <Button type="submit" className="w-full" onClick={formatMastodonData}>
+                                上传Mastodon数据文件
+                            </Button>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="flex flex-col space-y-1">
+                                <span>
+                                    从JSON导入
+                                </span>
+                                <span className="text-xs font-normal leading-snug text-muted-foreground">
+                                    导入格式化后的JSON数据
+                                </span>
+                            </Label>
+                            <Button type="submit" className="w-full" onClick={importData} disabled={loading}>
+                                {
+                                    loading ? (<><Icon.Loader2 size={20} className="animate-spin mr-1" />{`已上传${importedMemos}/${memos}条数据`}</>) : '导入JSON文件'
+                                }
+                            </Button>
+                        </div>
                     </div>
-                    <Button type="submit" className="w-full" onClick={formatMastodonData} >
-                        上传Mastodon数据文件
-                    </Button>
-                    <div className="space-y-2">
-                        <Label className="flex flex-col space-y-1 ">
-                            <span>
-                                导入数据
-                            </span>
-                            <span className="text-xs font-normal leading-snug text-muted-foreground">
-                                导入格式化后的JSON数据
-                            </span>
-                        </Label>
-                        <Button type="submit" className="w-full" onClick={importData} disabled={loading}>
-                            {
-                                loading ? (<><Icon.Loader2 size={20} className="animate-spin mr-1" />{`已上传${importedMemos}/${memos}条数据`}</>) : '导入数据文件'
-                            }
-                        </Button>
+
+                    <div className="space-y-4">
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" className="w-full">
+                                    清空所有数据
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>确认清空数据？</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        此操作将删除所有备忘录数据，包括内容、标签和链接。此操作不可撤销。
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>取消</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleClearData}>
+                                        确认清空
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </DialogContent>

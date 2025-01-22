@@ -77,7 +77,7 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink }
     await onSubmit?.(
       {
         content,
-        fileTokens: files?.map(item => item.source),
+        images: files?.map(item => item.source),
         link
       }).finally(() => {
         setLoading(false);

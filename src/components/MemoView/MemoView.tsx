@@ -98,7 +98,6 @@ const MemoView = ({
       onCancel={handleCancel}
     />
   }
-
   return (
     <Card className={`p-3 relative ${isLoading ? 'opacity-70' : ''}`}>
       <div className="flex justify-between items-start">
@@ -116,7 +115,6 @@ const MemoView = ({
           parsedContent={content.split('\n').map(text => parseContent(text))}
         />
       </div>
-
       {images.length > 0 && (
         <div className={`grid auto-rows-fr gap-2 mt-2 ${images.length === 1 ? 'grid-cols-1' :
           images.length === 2 ? 'grid-cols-2' :

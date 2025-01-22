@@ -2,6 +2,7 @@ import { useState } from "react";
 import { uploadFile } from "../../utils/file";
 import { toast } from "../ui/use-toast";
 import { createNewMemo } from "../../api/dbActions";
+import { parseExcelData } from "../../utils/importData";
 
 const useImportMemos = () => {
     const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ const useImportMemos = () => {
 
     const importData = () => {
         uploadFile({
-            accept: '.json',
+            accept: '.json,.xlsx,.xls',
             multiple: false,
             onSuccess: (files) => {
                 setLoading(true);
@@ -18,7 +19,17 @@ const useImportMemos = () => {
                 const reader = new FileReader();
                 reader.onload = async (event) => {
                     try {
-                        const memos = JSON.parse(event.target?.result as string);
+                        let memos;
+                        if (file.name.endsWith('.json')) {
+                            // Handle JSON files
+                            memos = JSON.parse(event.target?.result as string);
+                        } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                            // Handle Excel files
+                            memos = parseExcelData(event.target?.result as ArrayBuffer);
+                        } else {
+                            throw new Error('Unsupported file format');
+                        }
+
                         setMemos(memos.length);
                         for (let i = 0; i < memos.length; i++) {
                             await createNewMemo(memos[i]);
@@ -29,7 +40,7 @@ const useImportMemos = () => {
                             description: `成功导入${memos.length}条数据`,
                             duration: 1000
                         });
-                        setLoading(false); // Set loading to false after the queue completes
+                        setLoading(false);
                     } catch (error: any) {
                         toast({
                             variant: "destructive",
@@ -37,10 +48,15 @@ const useImportMemos = () => {
                             description: error?.message,
                             duration: 1000
                         });
-                        setLoading(false); // Set loading to false in case of parsing errors
+                        setLoading(false);
                     }
                 };
-                reader.readAsText(file);
+
+                if (file.name.endsWith('.json')) {
+                    reader.readAsText(file);
+                } else {
+                    reader.readAsArrayBuffer(file);
+                }
             },
             onError: (error) => {
                 toast({
@@ -50,7 +66,7 @@ const useImportMemos = () => {
                     duration: 1000
                 });
                 console.error("Error during file upload:", error);
-                setLoading(false); // Set loading to false in case of upload errors
+                setLoading(false);
             },
         });
     }

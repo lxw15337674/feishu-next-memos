@@ -38,8 +38,11 @@ type Note = Memo & {
 
 export interface NewMemo {
   content: string;
-  fileTokens?: string[];
+  images?: string[];
   link?: LinkType
+  created_time?: string;
+  last_edited_time?: string;
+  tags?: string[];
 }
 export interface TagWithCount extends Tag {
   memoCount: number;
