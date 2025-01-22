@@ -3,7 +3,6 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { getMemoByIdAction, getMemosDataActions } from '../api/dbActions';
 import useFilterStore from './filter';
-import { Memo } from '@prisma/client';
 import { Note } from '../api/type';
 
 interface MemoStore {
@@ -42,7 +41,7 @@ const useMemoStore = create<MemoStore>()(
             set((state) => {
               const index = state.memos.findIndex((item) => item.id === id);
               if (index !== -1 && data) {
-                state.memos[index] = data
+                state.memos[index] = { ...data, link: data.link || undefined };
               }
             });
           });
@@ -59,9 +58,8 @@ const useMemoStore = create<MemoStore>()(
         fetchInitData: async () => {
           const response = await getMemosDataActions({
             filter: useFilterStore.getState().filterParams,
-            desc: !!useFilterStore.getState().desc
+            desc: useFilterStore.getState().desc
           });
-          console.log(response);
           if (response) {
             const databases = {
               has_more: false,
@@ -76,10 +74,9 @@ const useMemoStore = create<MemoStore>()(
         },
         // 获取分页数据
         fetchPagedData: async () => {
-          const sort = useFilterStore.getState().desc;
           const response = await getMemosDataActions({
             filter: useFilterStore.getState().filterParams,
-            desc: !!sort
+            desc: useFilterStore.getState().desc
           });
           if (response) {
             const databases = {

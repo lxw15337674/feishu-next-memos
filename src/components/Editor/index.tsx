@@ -3,16 +3,15 @@ import React, { useState } from 'react';
 import Icon from '../Icon';
 import TagSuggestions from './TagSuggestions';
 import { Button } from '../ui/button';
-import useTagStore from '@/store/tag';
 import { useDebounceFn, useEventListener, useKeyPress } from 'ahooks';
 import { useFileUpload } from './useFileUpload';
 import ImageViewer from '../ImageViewer';
 import { PhotoProvider } from 'react-photo-view';
 import LinkAction, { LinkType } from './LinkAction';
-import { NewMemo } from '../../utils/parser';
 import { AutosizeTextarea } from '../ui/AutosizeTextarea';
 import { LucideIcon } from 'lucide-react';
 import { Link } from '@prisma/client';
+import { NewMemo } from '../../api/type';
 
 interface Props {
   onSubmit: (memo: NewMemo) => Promise<any>;
@@ -27,7 +26,7 @@ export interface ReplaceTextFunction {
 
 interface ToolbarButtonProps {
   icon: LucideIcon;
-  title: string;
+  title: string; 
   onClick: () => void;
   disabled?: boolean;
 }
@@ -46,7 +45,6 @@ const ToolbarButton = ({ icon: Icon, title, onClick, disabled = false }: Toolbar
 );
 
 const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink }: Props) => {
-  const { fetchTags } = useTagStore();
   const [loading, setLoading] = React.useState(false);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
   const { files, uploadFile, removeFile, isUploading, reset, pushFile } = useFileUpload(defaultImages)
@@ -84,7 +82,6 @@ const Editor = ({ onSubmit, defaultValue, onCancel, defaultImages, defaultLink }
       }).finally(() => {
         setLoading(false);
       })
-    fetchTags()
     editor!.value = '';
     reset()
     setLink(undefined)

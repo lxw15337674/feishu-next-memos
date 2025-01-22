@@ -11,7 +11,7 @@ import { useRequest } from 'ahooks';
 import ImageViewer from '../ImageViewer';
 import { updateMemoAction } from '../../api/dbActions';
 import Link from 'next/link';
-import { Note } from '../../api/type';
+import { Note, NewMemo } from '../../api/type';
 
 interface MemoContentProps {
   content: string;
@@ -33,13 +33,17 @@ const MemoContent = React.memo(({ content, isRecentTime, time, createdAt }: Memo
       {content.split('\n').map((text, index) => (
         <p key={index} className="whitespace-pre-wrap break-words leading-6">
           {parseContent(text).map((subItem, subIndex) => (
-            subItem.type !== 'tag' && <span key={subItem.text + subIndex}>{subItem.text}</span>
+            subItem.type !== 'tag' ? (
+              <span key={subItem.text + subIndex}>{subItem.text}</span>
+            ) : null
           ))}
         </p>
       ))}
     </div>
   </div>
 ));
+
+MemoContent.displayName = 'MemoContent';
 
 const MemoView = ({
   tags,
@@ -76,7 +80,7 @@ const MemoView = ({
   const handleEdit = useCallback(() => setIsEdited(true), []);
   const handleCancel = useCallback(() => setIsEdited(false), []);
 
-  const handleSubmit = useCallback(async (memo: any) => {
+  const handleSubmit = useCallback(async (memo: NewMemo) => {
     setIsLoading(true);
     try {
       await updateRecord(id, memo);

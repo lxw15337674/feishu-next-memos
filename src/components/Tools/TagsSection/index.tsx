@@ -1,10 +1,10 @@
 "use client"
-import useTagStore from '@/store/tag';
 import TagItemContainer from './TagItemContainer';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import useCountStore from '../../../store/count';
 
 const TagsSection = () => {
-  const { tags } = useTagStore();
+  const { tags } = useCountStore();
   if (!tags.length) {
     return null;
   }

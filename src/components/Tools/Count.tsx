@@ -1,15 +1,11 @@
 'use client';
 import React from 'react';
 import Icon from '../Icon';
-import useTagStore from '@/store/tag';
 import useCountStore from '@/store/count';
 import { Card } from '../ui/card';
-import useMemoStore from '../../store/memo';
 
 const Count: React.FC = () => {
-  const { tags } = useTagStore();
-  const { memosByDaysMap } = useCountStore();
-  const { databases } = useMemoStore()
+  const { memosCount, tags } = useCountStore();
   return (
     <Card className="w-full border  py-2 px-3 rounded-md space-y-0.5">
       <div className="mb-1 w-full flex flex-row justify-between items-center">
@@ -20,14 +16,14 @@ const Count: React.FC = () => {
           <Icon.CalendarDays className="w-4 h-auto mr-1" />
           <span className="block text-base sm:text-sm">天</span>
         </div>
-        <span className="font-mono">{memosByDaysMap?.size ?? 0}</span>
+        <span className="font-mono">{memosCount?.daysCount ?? 0}</span>
       </div>
       <div className="w-full flex justify-between items-center">
         <div className="w-full flex justify-start items-center">
           <Icon.Library className="w-4 h-auto mr-1" />
           <span className="block text-base sm:text-sm">笔记</span>
         </div>
-        {databases.total}
+        {memosCount.total}
       </div>
       <div className="w-full flex justify-between items-center">
         <div className="w-full flex justify-start items-center">

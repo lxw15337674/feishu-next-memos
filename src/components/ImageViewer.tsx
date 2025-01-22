@@ -20,16 +20,13 @@ const ImageViewer: React.FC<ImageProps> = ({ alt, src = '', onDelete, className,
     return (
         <PhotoView src={src}>
             <div className={`relative rounded-lg overflow-hidden h-full group`}>
-                <Image
+                <img
                     src={src}
                     alt={alt}
                     className={`${loading ? 'opacity-50' : 'group-hover:opacity-90'} transition-all duration-300 hover:scale-110 cursor-zoom-in ${className}`}
                     onError={(e) => {
                         e.currentTarget.src = `https://placehold.co/600x400?text=loading`;
                     }}
-                    layout="responsive"
-                    width={600}
-                    height={400}
                 />
                 {
                     loading && <div className='absolute inset-0 flex justify-center items-center'>

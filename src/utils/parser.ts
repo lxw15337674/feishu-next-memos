@@ -1,4 +1,3 @@
-import { LinkType } from '../api/type';
 
 enum ContentType {
   Text = 'text',
@@ -76,11 +75,3 @@ export function convertGMTDateToLocal(gmtDateString: Date) {
   // Create the local datetime string
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
-
-export interface NewMemo {
-  content: string;
-  fileTokens?: string[];
-  link?: LinkType
-}
-
-

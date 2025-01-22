@@ -1,22 +1,22 @@
 'use server';
 
-import { Filter, Note } from './type';
-import { NewMemo } from '../utils/parser';
+import { Filter, MemosCount, NewMemo, Note } from './type';
 import { prisma } from '.';
 import { generateTags } from './aiActions';
-
+import { Desc } from '../store/filter';
+import { format } from 'date-fns';
 
 
 export const getRecordsActions = async (config: {
     page_size?: number;
     filter?: Filter;
-    desc?: boolean;
+    desc?: Desc;
 }) => {
-    const { page_size = 200, filter, desc = true } = config;
+    const { page_size = 200, filter, desc = Desc.DESC } = config;
     try {
         const where = filter ? buildWhereClause(filter) : {};
 
-        const [items, total] = await Promise.all([
+        let [items, total] = await Promise.all([
             prisma.memo.findMany({
                 take: page_size,
                 where,
@@ -30,7 +30,9 @@ export const getRecordsActions = async (config: {
             }),
             prisma.memo.count({ where })
         ]);
-
+        if (desc === Desc.RANDOM) {
+            items = items.sort(() => Math.random() - 0.5);
+        }
         return {
             items: items as Note[],
             total,
@@ -41,9 +43,9 @@ export const getRecordsActions = async (config: {
     }
 };
 
-export const getMemosDataActions = async ({ filter, desc = true }: {
+export const getMemosDataActions = async ({ filter, desc = Desc.DESC }: {
     filter?: Filter;
-    desc?: boolean;
+    desc?: Desc;
 } = {}) => {
     try {
         const data = await getRecordsActions({
@@ -73,10 +75,7 @@ export const createNewMemo = async (newMemo: NewMemo) => {
                     }))
                 },
                 link: link ? {
-                    create: {
-                        url: link.link,
-                        text: link.text
-                    }
+                    create: link
                 } : undefined
             },
             include: {
@@ -145,10 +144,7 @@ export const updateMemoAction = async (id: string, newMemo: NewMemo) => {
                         }))
                     },
                     link: link ? {
-                        create: {
-                            url: link.link,
-                            text: link.text
-                        }
+                        create: link
                     } : undefined
                 },
                 include: {
@@ -213,8 +209,62 @@ function buildWhereClause(filter: Filter) {
 
 
 
-export const getTagsAction = async () => {
-    const tags = await prisma.tag.findMany();
-    return tags;
+export const getTagsWithCountAction = async () => {
+    const tagsWithCount = await prisma.tag.findMany({
+        include: {
+            _count: {
+                select: {
+                    memos: true // 统计与每个标签关联的 memos 数量
+                }
+            }
+        }
+    });
+
+    return tagsWithCount.map(tag => ({
+        ...tag,
+        memoCount: tag._count.memos
+    }));
 };
 
+
+
+// 获取按日期分组的备忘录数量，获取备忘录总数，获取记录天数
+export const getCountAction = async (): Promise<MemosCount> => {
+    try {
+        // 获取所有备忘录
+        const memos = await prisma.memo.findMany({
+            select: {
+                createdAt: true
+            },
+            orderBy: {
+                createdAt: 'asc'
+            }
+        });
+
+        // 按日期分组统计
+        const groupByDate = memos.reduce((acc: Record<string, number>, memo) => {
+            const date = format(memo.createdAt, 'yyyy/MM/dd');
+            acc[date] = (acc[date] || 0) + 1;
+            return acc;
+        }, {});
+
+        // 计算总数和记录天数
+        const total = memos.length;
+        const daysCount = Object.keys(groupByDate).length;
+
+        // 获取每日统计数据
+        const dailyStats = Object.entries(groupByDate).map(([date, count]) => ({
+            date,
+            count
+        }));
+
+        return {
+            dailyStats,
+            total,
+            daysCount
+        };
+    } catch (error) {
+        console.error("获取按日期分组的备忘录失败:", error);
+        throw new Error("获取备忘录数据失败");
+    }
+};

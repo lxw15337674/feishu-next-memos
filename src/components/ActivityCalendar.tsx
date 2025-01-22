@@ -13,7 +13,8 @@ import useFilterStore from '@/store/filter';
 import useCountStore from '../store/count';
 
 const ActivityCalendar: React.FC = () => {
-  const { memosByDaysMap } = useCountStore();
+  const { memosCount } = useCountStore();
+  const { dailyStats } = memosCount;
   const { timeFilter, setTimeFilter } = useFilterStore();
   const remarkedColor = (count: number): string => {
     if (count === 0) {
@@ -41,17 +42,17 @@ const ActivityCalendar: React.FC = () => {
         </td>
       );
     }
-
     return (
       <tr className={classNames.row} style={styles.row}>
         {weekNumberCell}
         {props.dates.map((date) => {
           const dateTime = format(date, 'yyyy/MM/dd');
-          const memosByDay = memosByDaysMap?.get(dateTime);
-          const length = memosByDay?.length ?? 0;
+          const memosByDay = dailyStats?.find(item => item.date === dateTime);
+          const length = memosByDay?.count ?? 0;
+          console.log(length);
           return (
             <td
-              className={`${classNames.cell} ${remarkedColor(length)}   `}
+              className={`${classNames.cell} ${remarkedColor(length)}`}
               style={styles.cell}
               key={getUnixTime(date)}
               role="presentation"

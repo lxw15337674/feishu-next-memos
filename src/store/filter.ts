@@ -10,6 +10,11 @@ export enum ImageFilter {
   NO_IMAGE = 'NO_IMAGE',
   NO_FilTER = 'NO_FilTER',
 }
+export enum Desc {
+  DESC = 'DESC',
+  ASC = 'ASC',
+  RANDOM = 'RANDOM',
+}
 interface MemoStore {
   tagFilter: string[];
   timeFilter?: Date;
@@ -22,9 +27,8 @@ interface MemoStore {
   setFilter: (tags: string[]) => void;
   removeTagFilter: (tag: string) => void;
   clearFilter: () => void;
-  setDesc: (desc: boolean | 'random') => void;
-  desc: boolean|'random'
-  
+  setDesc: (desc: Desc) => void;
+  desc: Desc
 }
 interface ComputedState {
   timeFilterText: string;
@@ -59,14 +63,14 @@ const useFilterStore = create(
             tagFilter: get().tagFilter.filter((item) => item !== tag),
           });
         },
-        desc: true,
+        desc: Desc.DESC,
         clearFilter: () => {
           set({
             tagFilter: [],
             timeFilter: undefined,
             textFilter: undefined,
             imageFilter: ImageFilter.NO_FilTER,
-            desc: true,
+            desc: Desc.DESC,
           });
         },
       }),

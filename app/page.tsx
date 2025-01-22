@@ -10,7 +10,7 @@ import MobileHeader from '../src/components/MobileHeader';
 
 export default async function Home() {
   return (
-    <div className="flex flex-col md:flex-row max-w-[100vw] min-h-screen">
+    <div className="flex flex-col md:flex-row max-w-[100vw] min-h-screen" suppressHydrationWarning>
       <MobileHeader />
       <LeftSide />
       <div className="flex-1 md:ml-40 md:pl-6 px-4 overflow-hidden">

@@ -1,6 +1,6 @@
 import { useEffect,  useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import useTagStore from '@/store/tag';
+import useCountStore from '@/store/count';
 import getCaretCoordinates from 'textarea-caret';
 import { Card } from '../ui/card';
 import classNames from 'classnames';
@@ -14,9 +14,9 @@ interface Props {
 }
 const TagSuggestions = ({ editorRef, replaceText }: Props) => {
   const [position, setPosition] = useState<Position | null>(null);
-  const tagStore = useTagStore();
-  const tagsRef = useRef(Array.from(tagStore.tags));
-  tagsRef.current = Array.from(tagStore.tags);
+  const { tags } = useCountStore();
+  const tagsRef = useRef(Array.from(tags));
+  tagsRef.current = Array.from(tags);
   const editor = editorRef
   const [selected, select] = useState(0);
   const selectedRef = useRef(selected);

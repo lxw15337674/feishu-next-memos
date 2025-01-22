@@ -3,14 +3,13 @@ import Tag from '@/components/Tag';
 import useCountStore from '@/store/count';
 import useFilterStore from '@/store/filter';
 import { useMemo } from 'react';
-import useTagStore from '../../../store/tag';
+import { TagWithCount } from '../../../api/type';
 
 interface Props {
-  tag: TagType;
+  tag: TagWithCount;
 }
 
 export const TagItemContainer = ({ tag }: Props) => {
-  const { memosByTag } = useCountStore();
   const { tagFilter, setFilter, removeTagFilter } = useFilterStore();
   const isActive = useMemo(() => {
     return tagFilter.includes(tag.name);
@@ -38,7 +37,7 @@ export const TagItemContainer = ({ tag }: Props) => {
         <Tag className="truncate " text={tag.name}>
           {tag.name}
         </Tag>
-        <div className="ml-auto">{memosByTag?.get?.(tag.name) || 0}</div>
+        <div className="ml-auto">{tag.memoCount}</div>
       </div>
     </div>
   );

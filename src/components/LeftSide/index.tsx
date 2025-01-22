@@ -6,7 +6,6 @@ import { Setting } from './Setting';
 const LeftSide = () => {
   return (
     <div
-      suppressHydrationWarning 
       className="
         hidden 
         md:flex
